@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<style>
+body{font-family:system-ui,'Noto Sans Bengali',sans-serif;margin:0;background:#F2F6F1;color:#17231D}
+.w{max-width:900px;margin:auto;padding:16px}
+.card{background:#fff;border:1px solid #D9E2DA;border-radius:10px;padding:12px;margin:10px 0}
+input,select,button{font:inherit;padding:7px;border:1px solid #C5D2C8;border-radius:6px;margin:2px}
+button{background:#1F4D3A;color:#fff;border:0;cursor:pointer}button.x{background:#C0392B}
+.tabs button{background:#fff;color:#17231D;border:1px solid #C5D2C8}.tabs button.on{background:#1F4D3A;color:#fff}
+small{color:#5E6F65}.row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+</style></head><body><div class="w" id="app"></div>
+<script>
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),app=document.getElementById("app");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let tab="orders";
+const ST={new:"নতুন",confirmed:"কনফার্মড",delivered:"ডেলিভারড",cancelled:"বাতিল"};
+async function start(){const{data}=await sb.auth.getSession();data.session?show():login()}
+function login(msg=""){app.innerHTML=`<h2>অ্যাডমিন লগইন</h2><div class="card"><input id="e" type="email" placeholder="ইমেইল"><br><input id="p" type="password" placeholder="পাসওয়ার্ড"><br><button id="go">লগইন</button> <small>${esc(msg)}</small></div>`;
+document.getElementById("go").onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:e.value,password:p.value});error?login("ইমেইল বা পাসওয়ার্ড ভুল"):show()}}
+async function show(){
+app.innerHTML=`<div class="row"><h2>অ্যাডমিন</h2><button id="out">লগআউট</button></div><div class="tabs"><button data-t="orders" class="${tab=="orders"?"on":""}">অর্ডার</button><button data-t="products" class="${tab=="products"?"on":""}">পণ্য</button></div><div id="c">লোড হচ্ছে...</div>`;
+out.onclick=async()=>{await sb.auth.signOut();login()};
+document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;show()});
+tab=="orders"?orders():products()}
+async function orders(){
+const{data,error}=await sb.from("orders").select("*").order("created_at",{ascending:false}).limit(100);
+if(error)return c.textContent="লোড করা যায়নি: "+error.message;
+c.innerHTML=data.length?data.map(o=>`<div class="card"><div class="row"><b>${esc(o.order_no)}</b><small>${new Date(o.created_at).toLocaleString("bn-BD")}</small></div>
+<div>${esc(o.name)} · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a><br>${esc(o.address)}${o.memo?"<br><small>"+esc(o.memo)+"</small>":""}</div>
+<div>${o.items.map(i=>esc(i.name_bn)+" × "+esc(i.qty)).join(", ")}</div>
+<div class="row"><b>মোট ৳${esc(o.total)} (ক্যাশ)</b><select data-o="${o.id}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${o.status==k?"selected":""}>${v}</option>`).join("")}</select></div></div>`).join(""):"<p>কোনো অর্ডার নেই।</p>";
+document.querySelectorAll("[data-o]").forEach(s=>s.onchange=async()=>{const{error}=await sb.from("orders").update({status:s.value}).eq("id",s.dataset.o);if(error)alert(error.message)})}
+async function products(){
+const{data,error}=await sb.from("products").select("*").order("id");
+if(error)return c.textContent="লোড করা যায়নি: "+error.message;
+c.innerHTML=`<div class="card"><b>নতুন পণ্য</b><br><input id="nb" placeholder="নাম (বাংলা)"><input id="ne" placeholder="Name (English)"><input id="ub" placeholder="একক (১ কেজি)" size="10"><input id="ue" placeholder="Unit (1 kg)" size="10"><input id="pr" type="number" min="0" placeholder="দাম ৳" style="width:90px"><input id="em" placeholder="🍅" size="3"><select id="ca"><option value="veg">সবজি</option><option value="fruit">ফল</option><option value="stap">মুদি</option><option value="dairy">দুধ-ডিম</option></select><button id="add">যোগ করুন</button></div>`+
+data.map(p=>`<div class="card row"><span>${esc(p.emoji)} <b>${esc(p.name_bn)}</b> <small>${esc(p.unit_bn)}</small></span><span>৳<input type="number" value="${esc(p.price)}" data-p="${p.id}" style="width:80px"> <button data-s="${p.id}" data-v="${p.in_stock}">${p.in_stock?"স্টকে আছে":"স্টক নেই"}</button> <button class="x" data-d="${p.id}">মুছুন</button></span></div>`).join("");
+add.onclick=async()=>{if(!nb.value||!pr.value)return alert("নাম ও দাম দিন");const{error}=await sb.from("products").insert({name_bn:nb.value,name_en:ne.value||null,unit_bn:ub.value,unit_en:ue.value,price:+pr.value,emoji:em.value||"🛒",category:ca.value});error?alert(error.message):products()};
+document.querySelectorAll("[data-p]").forEach(i=>i.onchange=async()=>{const{error}=await sb.from("products").update({price:+i.value}).eq("id",i.dataset.p);if(error)alert(error.message)});
+document.querySelectorAll("[data-s]").forEach(b=>b.onclick=async()=>{await sb.from("products").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.s);products()});
+document.querySelectorAll("[data-d]").forEach(b=>b.onclick=async()=>{if(confirm("মুছে ফেলবেন?")){await sb.from("products").delete().eq("id",b.dataset.d);products()}})}
+start();
+</script></body></html>
