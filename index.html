@@ -5,145 +5,162 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>হগলতান – খাবার ও মুদি ডেলিভারি</title>
 <style>
-:root{--pink:#d70f64;--pink2:#b50c54;--bg:#f6f6f7;--card:#fff;--tx:#2e2e2e;--mut:#6b6b6b;--ln:#e6e6e8;--ok:#2e9d4f}
-@media(prefers-color-scheme:dark){:root{--bg:#121214;--card:#1d1d20;--tx:#f1f1f1;--mut:#a0a0a6;--ln:#33333a}}
+:root{--p:#d70f64;--p2:#a80a4d;--bg:#f5f5f6;--cd:#fff;--tx:#222;--mu:#707078;--ln:#e8e8ec;--ok:#2e9d4f;--sh:0 2px 10px rgba(0,0,0,.07)}
+@media(prefers-color-scheme:dark){:root{--bg:#121214;--cd:#1e1e22;--tx:#f2f2f2;--mu:#a2a2aa;--ln:#34343b;--sh:none}}
 *{box-sizing:border-box;margin:0}
-body{font-family:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:70px}
-button{font:inherit;cursor:pointer;border:0}
-header{background:var(--pink);color:#fff;position:sticky;top:0;z-index:20}
+body{font-family:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;background:var(--bg);color:var(--tx);padding-bottom:84px}
+button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
+header{background:var(--p);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .bar{max-width:1100px;margin:auto;padding:10px 14px;display:flex;gap:10px;align-items:center}
-.logo{font-weight:700;font-size:22px}
+.logo{font-weight:800;font-size:22px;cursor:pointer}
 .sp{flex:1}
-.pill{background:rgba(255,255,255,.18);color:#fff;border-radius:20px;padding:6px 14px}
-.cartbtn{background:#fff;color:var(--pink);font-weight:700;border-radius:20px;padding:6px 14px}
-.hero{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;padding:26px 14px 34px}
-.hero div{max-width:1100px;margin:auto}
-.hero h1{font-size:28px;margin-bottom:6px}
-.search{margin-top:14px;display:flex;background:#fff;border-radius:10px;overflow:hidden;max-width:560px}
-.search input{flex:1;border:0;padding:12px 14px;font:inherit;outline:0;color:#222}
-main{max-width:1100px;margin:auto;padding:14px}
-.tabs{display:flex;gap:8px;margin:6px 0 14px;overflow-x:auto}
-.tab{padding:8px 16px;border-radius:20px;background:var(--card);color:var(--tx);border:1px solid var(--ln);white-space:nowrap}
-.tab.on{background:var(--pink);color:#fff;border-color:var(--pink)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--ln);border-radius:14px;overflow:hidden}
-.rc{cursor:pointer}
-.rc .img{height:110px;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#ffe3ef,#fff1c9)}
-.rc.closed{opacity:.55}
-.rc .b{padding:10px 12px}
-.rc h3{font-size:17px}
-.m{color:var(--mut);font-size:13px;margin-top:4px}
-.tag{display:inline-block;font-size:12px;border-radius:10px;padding:2px 8px;background:#ffe3ef;color:var(--pink);margin-top:6px}
-.tag.x{background:#eee;color:#666}
-.item{display:flex;gap:10px;align-items:center;padding:12px;border-bottom:1px solid var(--ln)}
+.pill{background:rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:6px 14px;font-size:14px}
+.cartbtn{background:#fff;color:var(--p);font-weight:700;border-radius:20px;padding:6px 14px}
+.hero{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:24px 14px 56px}
+.hero>div{max-width:1100px;margin:auto}
+.hero h1{font-size:30px;line-height:1.25}
+.hero p{opacity:.92;margin-top:6px}
+.chips{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.chips span{background:rgba(255,255,255,.18);border-radius:16px;padding:4px 12px;font-size:13px}
+main{max-width:1100px;margin:-34px auto 0;padding:0 14px}
+.search{background:var(--cd);border-radius:12px;box-shadow:var(--sh);display:flex;align-items:center;padding:0 14px}
+.search input{flex:1;border:0;background:none;padding:14px 8px;font:inherit;outline:0;color:var(--tx)}
+.tabs{display:flex;gap:8px;margin:16px 0;overflow-x:auto;padding-bottom:2px}
+.tab{padding:9px 18px;border-radius:22px;background:var(--cd);box-shadow:var(--sh);white-space:nowrap;font-weight:600}
+.tab.on{background:var(--p);color:#fff}
+h2.t{font-size:20px;margin:6px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{background:var(--cd);border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.rc{cursor:pointer;transition:transform .15s}.rc:hover{transform:translateY(-3px)}
+.rc.closed .cv{filter:grayscale(1);opacity:.6}
+.cv{height:130px;position:relative;background:linear-gradient(135deg,#ffd6e8,#ffe9b8);display:flex;align-items:center;justify-content:center;font-size:56px;overflow:hidden}
+.cv img{width:100%;height:100%;object-fit:cover;display:block}
+.bd{position:absolute;top:10px;left:10px;background:#fff;color:var(--ok);font-size:12px;font-weight:700;border-radius:12px;padding:2px 10px}
+.bd.x{color:#777}
+.fee{position:absolute;bottom:8px;right:8px;background:var(--p);color:#fff;font-size:12px;border-radius:10px;padding:2px 10px}
+.rb{padding:12px}.rb h3{font-size:17px}
+.mu{color:var(--mu);font-size:13px;margin-top:3px}
+.rh{border-radius:0 0 18px 18px}
+.rh .cv{height:170px;font-size:72px}
+.back{color:var(--p);font-weight:700;margin:4px 0 12px}
+.info{padding:14px}.info h2{font-size:24px}
+.item{display:flex;gap:12px;align-items:center;padding:14px;border-bottom:1px solid var(--ln)}
 .item:last-child{border:0}
-.em{font-size:34px;width:48px;text-align:center}
-.item .i{flex:1}
-.add{background:var(--pink);color:#fff;border-radius:8px;padding:6px 14px}
+.item .i{flex:1;min-width:0}
+.th{width:84px;height:84px;border-radius:12px;background:linear-gradient(135deg,#ffe3ef,#fff1c9);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;flex:none}
+.th img{width:100%;height:100%;object-fit:cover}
+.pr{font-weight:700;margin-top:4px}
+.add{background:var(--p);color:#fff;border-radius:10px;padding:7px 16px;font-weight:600}
 .add:disabled{background:#999}
-.back{background:none;color:var(--pink);padding:4px 0;margin-bottom:8px;font-weight:600}
-.qty{display:flex;align-items:center;gap:8px}
-.qty button{width:28px;height:28px;border-radius:50%;background:var(--ln);color:var(--tx)}
-.drawer{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40;justify-content:flex-end}
-.drawer.on{display:flex}
-.panel{background:var(--card);width:min(420px,100%);height:100%;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
-.row{display:flex;justify-content:space-between;gap:8px}
-.panel input,.panel textarea{width:100%;padding:10px;border:1px solid var(--ln);border-radius:8px;font:inherit;background:var(--bg);color:var(--tx)}
-.big{background:var(--pink);color:#fff;border-radius:10px;padding:12px;font-weight:700;width:100%}
+.st{display:inline-flex;align-items:center;gap:10px;background:var(--p);color:#fff;border-radius:10px;padding:3px 6px;font-weight:700}
+.st button{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.25);color:#fff}
+.gc{padding:12px;text-align:center}
+.gc .th{width:100%;height:110px;margin-bottom:8px}
+.sk{height:210px;border-radius:14px;background:linear-gradient(90deg,var(--ln),var(--cd),var(--ln));background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.fab{position:fixed;left:12px;right:12px;bottom:12px;max-width:560px;margin:auto;background:var(--p);color:#fff;border-radius:14px;padding:14px 18px;display:none;justify-content:space-between;z-index:30;font-weight:700;box-shadow:0 6px 20px rgba(215,15,100,.4)}
+.fab.on{display:flex}
+.dr{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40;justify-content:flex-end}
+.dr.on{display:flex}
+.pn{background:var(--cd);width:min(430px,100%);height:100%;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pn input,.pn textarea,.trk input{width:100%;padding:11px;border:1px solid var(--ln);border-radius:10px;font:inherit;background:var(--bg);color:var(--tx)}
+.big{background:var(--p);color:#fff;border-radius:12px;padding:13px;font-weight:700;width:100%}
 .big:disabled{background:#999}
 .err{color:#d00;font-size:14px}
-.ok{text-align:center;padding:30px 10px}
-.ok .e{font-size:60px}
-.steps{display:flex;justify-content:space-between;margin:14px 0;font-size:12px;color:var(--mut)}
-.steps span.on{color:var(--ok);font-weight:700}
-.fab{position:fixed;bottom:0;left:0;right:0;background:var(--pink);color:#fff;padding:14px;display:none;justify-content:space-between;z-index:30;font-weight:700}
-.fab.on{display:flex}
-footer{text-align:center;color:var(--mut);font-size:13px;padding:20px}
+.ok{text-align:center;padding:24px 8px}.ok .e{font-size:60px}
+.steps{display:flex;justify-content:space-between;margin:18px 0;position:relative}
+.steps:before{content:"";position:absolute;top:13px;left:8%;right:8%;height:3px;background:var(--ln)}
+.sx{position:relative;text-align:center;font-size:12px;color:var(--mu);flex:1}
+.sx i{display:block;width:26px;height:26px;border-radius:50%;background:var(--ln);margin:0 auto 4px;line-height:26px;font-style:normal;color:#fff;position:relative}
+.sx.on{color:var(--ok);font-weight:700}.sx.on i{background:var(--ok)}
+.trk{max-width:520px}
+footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
 </style>
 </head>
 <body>
 <header><div class="bar">
-  <span class="logo">🛵 হগলতান</span><span class="sp"></span>
-  <button class="pill" id="lang">English</button>
+  <span class="logo" id="logo">🛵 হগলতান</span><span class="sp"></span>
+  <button class="pill" id="lang"></button>
   <button class="cartbtn" id="cartbtn"></button>
 </div></header>
 <section class="hero"><div>
   <h1 id="h1"></h1><p id="sub"></p>
-  <div class="search"><input id="q"></div>
+  <div class="chips" id="chips"></div>
 </div></section>
 <main>
+  <div class="search"><span>🔍</span><input id="q"></div>
   <div class="tabs" id="tabs"></div>
   <div id="view"></div>
 </main>
 <button class="fab" id="fab"></button>
-<div class="drawer" id="drawer"><div class="panel" id="panel"></div></div>
+<div class="dr" id="dr"><div class="pn" id="pn"></div></div>
 <footer id="foot"></footer>
 
 <script>
-const SB="https://zphbqwkvsacptggytbmr.supabase.co";
-const KEY="sb_publishable_i6_Cye57ryc5jSzHdmem-A_7WDig9Zd";
+const SB="https://zphbqwkvsacptggytbmr.supabase.co",KEY="sb_publishable_i6_Cye57ryc5jSzHdmem-A_7WDig9Zd";
 const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
 const T={
- bn:{h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন (ক্যাশ অন ডেলিভারি)",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:"রেস্তোরাঁ",groc:"মুদি বাজার",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",new:"নতুন",confirmed:"নিশ্চিত",preparing:"তৈরি হচ্ছে",on_the_way:"পথে",delivered:"পৌঁছেছে",close:"বন্ধ করুন",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",load:"লোড হচ্ছে…",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",min_:"মিনিট",groceryLabel:"মুদি"},
- en:{h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door (cash on delivery)",ph:"Search restaurants, dishes or items…",rest:"Restaurants",groc:"Grocery",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",new:"New",confirmed:"Confirmed",preparing:"Preparing",on_the_way:"On the way",delivered:"Delivered",close:"Close",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",load:"Loading…",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",min_:"min",groceryLabel:"Grocery"}
-};
-const GROC_FEE=40;
-let L=localStorage.getItem("lang")||"bn", t=k=>T[L][k];
-let S={tab:"rest",cat:"all",rid:null,q:"",R:[],P:[],cart:{},cartRest:null,loading:true};
+bn:{h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:"💵 ক্যাশ অন ডেলিভারি",c2:"🍽️ রেস্তোরাঁর খাবার",c3:"🥬 তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:"🍽️ রেস্তোরাঁ",groc:"🥬 মুদি বাজার",trk:"📦 অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
+en:{h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:"💵 Cash on delivery",c2:"🍽️ Restaurant food",c3:"🥬 Fresh grocery",ph:"Search restaurants, dishes or items…",rest:"🍽️ Restaurants",groc:"🥬 Grocery",trk:"📦 Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
+const GROC_FEE=40,SEQ=["new","confirmed","preparing","on_the_way","delivered"];
+let L=localStorage.getItem("lang")||"bn",t=k=>T[L][k];
+let S={tab:"rest",cat:"all",rid:null,q:"",R:[],P:[],cart:{},cartRest:null,loading:true,tn:""};
 try{const c=JSON.parse(localStorage.getItem("cart")||"null");if(c){S.cart=c.cart||{};S.cartRest=c.cartRest??null}}catch(e){}
 const $=id=>document.getElementById(id);
-const n=x=>Number(x).toLocaleString(L==="bn"?"bn-BD":"en-US");
-const tk=x=>"৳"+n(x);
+const n=x=>Number(x).toLocaleString(L==="bn"?"bn-BD":"en-US"),tk=x=>"৳"+n(x);
 const nm=(o,k="name")=>L==="en"&&o[k+"_en"]?o[k+"_en"]:o[k+"_bn"];
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify({cart:S.cart,cartRest:S.cartRest}))}catch(e){}};
-const cuEm=r=>{const c=r.cuisine||"";return c.includes("বিরিয়ানি")?"🍛":c.includes("বাঙালি")?"🍚":c.includes("ফাস্ট")?"🍔":em((r.menu_items||[])[0]?.emoji)};
 const em=e=>e==="🫘"?"🍲":(e||"🛒");
+const cuEm=r=>{const c=r.cuisine||"";return c.includes("বিরিয়ানি")?"🍛":c.includes("বাঙালি")?"🍚":c.includes("ফাস্ট")?"🍔":"🍽️"};
+const img=(u,e)=>u?`<img loading="lazy" src="${esc(u)}" alt="" onerror="this.replaceWith(document.createTextNode('${e}'))">`:e;
 
 async function load(){
   try{
-    const [r,p]=await Promise.all([
+    const[r,p]=await Promise.all([
       fetch(SB+"/rest/v1/restaurants?select=*,menu_items(*)&order=id",{headers:H}).then(x=>x.json()),
-      fetch(SB+"/rest/v1/products?select=*&order=id",{headers:H}).then(x=>x.json())
-    ]);
+      fetch(SB+"/rest/v1/products?select=*&order=id",{headers:H}).then(x=>x.json())]);
     S.R=Array.isArray(r)?r:[];
-    const seen={};
-    (Array.isArray(p)?p:[]).forEach(x=>{const k=x.name_bn+"|"+x.unit_bn;if(!seen[k])seen[k]=x});
+    const seen={};(Array.isArray(p)?p:[]).forEach(x=>{const k=x.name_bn+"|"+x.unit_bn;if(!seen[k])seen[k]=x});
     S.P=Object.values(seen);
   }catch(e){}
   S.loading=false;render();
 }
 
+/* quantity control */
+const ctl=(key,dis)=>{const c=S.cart[key];return c?`<span class="st"><button data-q="${key}" data-d="-1">−</button>${n(c.q)}<button data-q="${key}" data-d="1">+</button></span>`:`<button class="add" data-add="${key}" ${dis?"disabled":""}>${t("add")}</button>`};
+
 function render(){
   document.documentElement.lang=L;
   $("lang").textContent=L==="bn"?"English":"বাংলা";
   $("h1").textContent=t("h1");$("sub").textContent=t("sub");$("q").placeholder=t("ph");$("foot").textContent=t("foot");
-  $("tabs").innerHTML=[["rest","rest"],["groc","groc"]].map(([k,l])=>`<button class="tab ${S.tab===k&&!S.rid?"on":""}" data-t="${k}">${t(l)}</button>`).join("");
+  $("chips").innerHTML=["c1","c2","c3"].map(k=>`<span>${t(k)}</span>`).join("");
+  $("tabs").innerHTML=["rest","groc","trk"].map(k=>`<button class="tab ${S.tab===k&&!S.rid?"on":""}" data-t="${k}">${t(k)}</button>`).join("");
   const cnt=Object.values(S.cart).reduce((a,b)=>a+b.q,0);
-  $("cartbtn").textContent=t("cart")+" ("+n(cnt)+")";
-  const f=$("fab");f.classList.toggle("on",cnt>0);f.textContent="";
-  if(cnt){f.innerHTML=`<span>${t("view")} · ${n(cnt)}</span><span>${tk(sub())}</span>`}
-  const v=$("view");
-  if(S.loading){v.innerHTML=`<p>${t("load")}</p>`;return}
-  const q=S.q.toLowerCase();
+  $("cartbtn").textContent="🛒 "+t("cart")+" ("+n(cnt)+")";
+  const f=$("fab");f.classList.toggle("on",cnt>0);
+  if(cnt)f.innerHTML=`<span>🛒 ${t("view")} · ${n(cnt)}</span><span>${tk(sub())}</span>`;
+  const v=$("view"),q=S.q.toLowerCase();
+  if(S.loading){v.innerHTML=`<div class="grid">${"<div class='sk'></div>".repeat(6)}</div>`;return}
+  if(S.tab==="trk"&&!S.rid){v.innerHTML=`<div class="card info trk"><h2>${t("track")}</h2><div class="row" style="margin-top:12px;gap:8px"><input id="tn" placeholder="${t("tno")}" value="${esc(S.tn)}"><button class="add" id="tgo">${t("tgo")}</button></div><div id="tr"></div></div>`;
+    if(S.tn)trackShow();return}
   if(S.rid){
     const r=S.R.find(x=>x.id===S.rid);if(!r){S.rid=null;return render()}
     v.innerHTML=`<button class="back" data-back>${t("back")}</button>
-    <div class="card" style="padding:14px;margin-bottom:12px"><h2>${esc(nm(r,"name"))}</h2>
-    <div class="m">${esc(r.cuisine||"")} · ${esc(r.area||"")} · ${n(r.prep_time_min||0)} ${t("min_")}</div>
-    <div class="m">${t("fee")} ${tk(r.delivery_fee)} · ${t("min")} ${tk(r.min_order)}</div>
-    <span class="tag ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div>
-    <div class="card">${(r.menu_items||[]).filter(m=>m.in_stock).map(m=>`<div class="item"><div class="em">${em(m.emoji)}</div><div class="i"><b>${esc(nm(m))}</b><div class="m">${esc(m.description_bn||"")}</div><div><b>${tk(m.price)}</b></div></div><button class="add" data-add="m${m.id}" ${r.is_open?"":"disabled"}>${t("add")}</button></div>`).join("")}</div>`;
-    return;
-  }
+    <div class="card rh"><div class="cv">${img(r.image_url,cuEm(r))}<span class="bd ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div>
+    <div class="info"><h2>${esc(nm(r,"name"))}</h2><div class="mu">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="mu">⏱ ${n(r.prep_time_min||0)} ${t("mn")} · ${t("fee")} ${tk(r.delivery_fee)} · ${t("min")} ${tk(r.min_order)}</div></div></div>
+    <h2 class="t" style="margin-top:18px">${t("pop")}</h2>
+    <div class="card">${(r.menu_items||[]).filter(m=>m.in_stock&&(!q||m.name_bn.toLowerCase().includes(q))).sort((a,b)=>a.id-b.id).map(m=>`<div class="item"><div class="i"><b>${esc(nm(m))}</b><div class="mu">${esc(m.description_bn||"")}</div><div class="pr">${tk(m.price)}</div></div><div class="th">${img(m.image_url,em(m.emoji))}</div>${ctl("m"+m.id,!r.is_open)}</div>`).join("")||`<p class="info mu">${t("none")}</p>`}</div>`;
+    return}
   if(S.tab==="rest"){
     const list=S.R.filter(r=>!q||(r.name_bn+" "+(r.cuisine||"")+" "+(r.area||"")+" "+(r.menu_items||[]).map(m=>m.name_bn).join(" ")).toLowerCase().includes(q));
-    v.innerHTML=list.length?`<div class="grid">${list.map(r=>`<div class="card rc ${r.is_open?"":"closed"}" data-r="${r.id}"><div class="img">${cuEm(r)}</div><div class="b"><h3>${esc(nm(r,"name"))}</h3><div class="m">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="m">⏱ ${n(r.prep_time_min||0)} ${t("min_")} · ${t("fee")} ${tk(r.delivery_fee)}</div><span class="tag ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div></div>`).join("")}</div>`:`<p>${t("none")}</p>`;
+    v.innerHTML=list.length?`<div class="grid">${list.map(r=>`<div class="card rc ${r.is_open?"":"closed"}" data-r="${r.id}"><div class="cv">${img(r.image_url,cuEm(r))}<span class="bd ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span><span class="fee">${t("fee")} ${tk(r.delivery_fee)}</span></div><div class="rb"><h3>${esc(nm(r,"name"))}</h3><div class="mu">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="mu">⏱ ${n(r.prep_time_min||0)} ${t("mn")} · ${t("min")} ${tk(r.min_order)}</div></div></div>`).join("")}</div>`:`<p class="mu">${t("none")}</p>`;
   }else{
     const cats=["all","veg","fruit","stap","dairy"];
     const list=S.P.filter(p=>p.in_stock&&(S.cat==="all"||p.category===S.cat)&&(!q||(p.name_bn+" "+(p.name_en||"")).toLowerCase().includes(q)));
     v.innerHTML=`<div class="tabs">${cats.map(c=>`<button class="tab ${S.cat===c?"on":""}" data-c="${c}">${t(c)}</button>`).join("")}</div>
-    <div class="grid">${list.map(p=>`<div class="card" style="padding:12px"><div style="font-size:40px">${em(p.emoji)}</div><b>${esc(nm(p))}</b><div class="m">${esc(p.unit_bn||"")}</div><div class="row" style="margin-top:8px;align-items:center"><b>${tk(p.price)}</b><button class="add" data-add="p${p.id}">${t("add")}</button></div></div>`).join("")}</div>${list.length?"":`<p>${t("none")}</p>`}`;
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${list.map(p=>`<div class="card gc"><div class="th">${img(p.image_url,em(p.emoji))}</div><b>${esc(nm(p))}</b><div class="mu">${esc(p.unit_bn||"")}</div><div class="row" style="margin-top:8px"><b>${tk(p.price)}</b>${ctl("p"+p.id)}</div></div>`).join("")}</div>${list.length?"":`<p class="mu">${t("none")}</p>`}`;
   }
 }
 
@@ -153,64 +170,66 @@ function find(key){
 }
 function addItem(key){
   const it=find(key);if(!it)return;
-  if(Object.keys(S.cart).length&&S.cartRest!==it.rest){
-    if(!confirm(t("oneRest")))return;S.cart={};
-  }
-  S.cartRest=it.rest;
-  S.cart[key]=S.cart[key]?{...S.cart[key],q:S.cart[key].q+1}:{...it,q:1};
-  save();render();
+  if(Object.keys(S.cart).length&&S.cartRest!==it.rest){if(!confirm(t("oneRest")))return;S.cart={}}
+  S.cartRest=it.rest;S.cart[key]={...it,q:(S.cart[key]?.q||0)+1};save();render();
 }
+function chg(key,d){const c=S.cart[key];if(!c)return;c.q+=d;if(c.q<=0)delete S.cart[key];if(!Object.keys(S.cart).length)S.cartRest=null;save();render();if($("dr").classList.contains("on"))openCart()}
 const sub=()=>Object.values(S.cart).reduce((a,b)=>a+b.price*b.q,0);
 const fee=()=>{if(!Object.keys(S.cart).length)return 0;if(S.cartRest===null)return GROC_FEE;const r=S.R.find(x=>x.id===S.cartRest);return r?+r.delivery_fee:0};
 const minOrder=()=>{const r=S.R.find(x=>x.id===S.cartRest);return r?+r.min_order:0};
 
-function openCart(msg){
-  const p=$("panel"),items=Object.values(S.cart);
-  p.innerHTML=`<div class="row"><h2>${t("cart")}</h2><button data-close class="pill" style="color:var(--tx);background:var(--ln)">✕</button></div>`+
-  (items.length?`${items.map(i=>`<div class="row" style="align-items:center"><span>${i.e} ${esc(i.name)}<div class="m">${tk(i.price)}</div></span><span class="qty"><button data-q="${i.key}" data-d="-1">−</button>${n(i.q)}<button data-q="${i.key}" data-d="1">+</button></span></div>`).join("")}
+function openCart(){
+  const items=Object.values(S.cart);
+  $("pn").innerHTML=`<div class="row"><h2>🛒 ${t("cart")}</h2><button data-close class="pill" style="background:var(--ln);color:var(--tx)">✕</button></div>`+
+  (items.length?`${items.map(i=>`<div class="row"><span>${i.e} ${esc(i.name)}<div class="mu">${tk(i.price)}</div></span><span class="st"><button data-q="${i.key}" data-d="-1">−</button>${n(i.q)}<button data-q="${i.key}" data-d="1">+</button></span></div>`).join("")}
   <hr style="border:0;border-top:1px solid var(--ln)">
-  <div class="row"><span>${t("sub_t")}</span><b>${tk(sub())}</b></div>
-  <div class="row"><span>${t("del")}</span><b>${tk(fee())}</b></div>
-  <div class="row"><span>${t("tot")}</span><b>${tk(sub()+fee())}</b></div>
+  <div class="row"><span>${t("sub_t")}</span><b>${tk(sub())}</b></div><div class="row"><span>${t("del")}</span><b>${tk(fee())}</b></div><div class="row"><span>${t("tot")}</span><b>${tk(sub()+fee())}</b></div>
   <input id="f_name" placeholder="${t("name")}" maxlength="100"><input id="f_phone" placeholder="${t("phone")}" maxlength="20" inputmode="tel"><textarea id="f_addr" rows="2" placeholder="${t("addr")}" maxlength="300"></textarea><input id="f_memo" placeholder="${t("memo")}" maxlength="200">
-  <div class="err" id="err">${msg||""}</div>
-  <button class="big" id="place">${t("place")} · ${tk(sub()+fee())}</button>`:`<p>${t("empty")}</p>`);
-  $("drawer").classList.add("on");
+  <div class="err" id="err"></div><button class="big" id="place">${t("place")} · ${tk(sub()+fee())}</button>`:`<p class="mu">${t("empty")}</p>`);
+  $("dr").classList.add("on");
 }
 
 async function placeOrder(){
-  const name=$("f_name").value.trim(),phone=$("f_phone").value.trim(),addr=$("f_addr").value.trim(),memo=$("f_memo").value.trim();
-  const e=$("err");
+  const name=$("f_name").value.trim(),phone=$("f_phone").value.trim(),addr=$("f_addr").value.trim(),memo=$("f_memo").value.trim(),e=$("err");
   if(!name||!addr||!/^(\+?88)?01\d{9}$/.test(phone.replace(/[\s-]/g,""))){e.textContent=t("bad");return}
   if(S.cartRest!==null&&sub()<minOrder()){e.textContent=t("minerr")+tk(minOrder());return}
   const b=$("place");b.disabled=true;b.textContent=t("placing");
   const no="HG"+Date.now().toString(36).toUpperCase().slice(-6);
-  const body={order_no:no,name,phone,address:addr,memo:memo||null,
-    items:Object.values(S.cart).map(i=>({name_bn:i.bn||i.name,name:i.name,price:i.price,qty:i.q})),
-    subtotal:sub(),delivery:fee(),total:sub()+fee(),status:"new",restaurant_id:S.cartRest,rider_id:null};
+  const body={order_no:no,name,phone,address:addr,memo:memo||null,items:Object.values(S.cart).map(i=>({name_bn:i.bn||i.name,name:i.name,price:i.price,qty:i.q})),subtotal:sub(),delivery:fee(),total:sub()+fee(),status:"new",restaurant_id:S.cartRest,rider_id:null};
   try{
     const r=await fetch(SB+"/rest/v1/orders",{method:"POST",headers:{...H,Prefer:"return=minimal"},body:JSON.stringify(body)});
     if(!r.ok)throw 0;
-    S.cart={};S.cartRest=null;save();render();
-    const st=["new","confirmed","preparing","on_the_way","delivered"];
-    $("panel").innerHTML=`<div class="ok"><div class="e">✅</div><h2>${t("done")}</h2><p>${t("ono")}: <b>${no}</b></p><p class="m">${t("cod")}</p>
-    <div class="steps">${st.map((s,i)=>`<span class="${i===0?"on":""}">${t(s)}</span>`).join("")}</div>
-    <button class="big" data-close>${t("close")}</button></div>`;
+    S.cart={};S.cartRest=null;save();S.tn=no;try{localStorage.setItem("lastOrder",no)}catch(x){}render();
+    $("pn").innerHTML=`<div class="ok"><div class="e">✅</div><h2>${t("done")}</h2><p>${t("ono")}: <b>${no}</b></p><p class="mu">${t("cod")}</p><div id="tr"></div><button class="big" data-close style="margin-top:14px">OK</button></div>`;
+    trackShow();
   }catch(x){b.disabled=false;b.textContent=t("place");e.textContent=t("fail")}
 }
 
+async function trackShow(){
+  const box=$("tr");if(!box||!S.tn)return;
+  try{
+    const r=await fetch(SB+"/rest/v1/rpc/track_order",{method:"POST",headers:H,body:JSON.stringify({p_no:S.tn})}).then(x=>x.json());
+    if(!Array.isArray(r)||!r.length){box.innerHTML=`<p class="err" style="margin-top:10px">${t("tnf")}</p>`;return}
+    const st=r[0].status;
+    if(st==="cancelled"){box.innerHTML=`<p class="err" style="margin-top:10px">${t("cancelled")}</p>`;return}
+    const i=Math.max(0,SEQ.indexOf(st));
+    box.innerHTML=`<div class="steps">${T[L].s.map((s,k)=>`<div class="sx ${k<=i?"on":""}"><i>${k<=i?"✓":""}</i>${s}</div>`).join("")}</div>`;
+  }catch(e){}
+}
+
 document.addEventListener("click",e=>{
-  const g=s=>e.target.closest(s);
-  let el;
-  if(el=g("[data-t]")){S.tab=el.dataset.t;S.rid=null;render()}
+  const g=s=>e.target.closest(s);let el;
+  if(el=g("[data-t]")){S.tab=el.dataset.t;S.rid=null;if(S.tab==="trk"&&!S.tn)S.tn=localStorage.getItem("lastOrder")||"";render()}
   else if(el=g("[data-c]")){S.cat=el.dataset.c;render()}
   else if(el=g("[data-r]")){S.rid=+el.dataset.r;render();scrollTo(0,0)}
   else if(g("[data-back]")){S.rid=null;render()}
   else if(el=g("[data-add]")){addItem(el.dataset.add)}
+  else if(el=g("[data-q]")){chg(el.dataset.q,+el.dataset.d)}
   else if(g("#cartbtn")||g("#fab")){openCart()}
-  else if(g("[data-close]")||e.target.id==="drawer"){$("drawer").classList.remove("on")}
-  else if(el=g("[data-q]")){const k=el.dataset.q,c=S.cart[k];c.q+=+el.dataset.d;if(c.q<=0)delete S.cart[k];if(!Object.keys(S.cart).length)S.cartRest=null;save();render();openCart()}
+  else if(g("[data-close]")||e.target.id==="dr"){$("dr").classList.remove("on")}
   else if(g("#place")){placeOrder()}
+  else if(g("#tgo")){S.tn=$("tn").value.trim().toUpperCase();trackShow()}
+  else if(g("#logo")){S.tab="rest";S.rid=null;render()}
   else if(g("#lang")){L=L==="bn"?"en":"bn";try{localStorage.setItem("lang",L)}catch(x){}render()}
 });
 $("q").addEventListener("input",e=>{S.q=e.target.value;render()});
