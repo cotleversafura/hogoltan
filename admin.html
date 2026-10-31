@@ -5,42 +5,157 @@
 <script src="config.js"></script>
 <style>
 body{font-family:system-ui,'Noto Sans Bengali',sans-serif;margin:0;background:#F2F6F1;color:#17231D}
-.w{max-width:900px;margin:auto;padding:16px}
+.w{max-width:1000px;margin:auto;padding:16px}
 .card{background:#fff;border:1px solid #D9E2DA;border-radius:10px;padding:12px;margin:10px 0}
-input,select,button{font:inherit;padding:7px;border:1px solid #C5D2C8;border-radius:6px;margin:2px}
-button{background:#1F4D3A;color:#fff;border:0;cursor:pointer}button.x{background:#C0392B}
-.tabs button{background:#fff;color:#17231D;border:1px solid #C5D2C8}.tabs button.on{background:#1F4D3A;color:#fff}
-small{color:#5E6F65}.row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,button,textarea{font:inherit;padding:7px;border:1px solid #C5D2C8;border-radius:6px;margin:2px}
+button{background:#1F4D3A;color:#fff;border:0;cursor:pointer}button.x{background:#C0392B}button.g{background:#fff;color:#17231D;border:1px solid #C5D2C8}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button{background:#fff;color:#17231D;border:1px solid #C5D2C8}.tabs button.on{background:#1F4D3A;color:#fff}
+small,.m{color:#5E6F65}.row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:#fff;border:1px solid #D9E2DA;border-radius:10px;padding:12px;text-align:center}.stat b{display:block;font-size:24px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;background:#E8F0EA}
+.new{border-left:5px solid #E8A317}.sub{margin-left:14px;border-left:3px solid #D9E2DA;padding-left:10px}
+@media print{body *{visibility:hidden}.pr,.pr *{visibility:visible}.pr{position:absolute;left:0;top:0;width:100%}}
 </style></head><body><div class="w" id="app"></div>
 <script>
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),app=document.getElementById("app");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let tab="orders";
-const ST={new:"নতুন",confirmed:"কনফার্মড",delivered:"ডেলিভারড",cancelled:"বাতিল"};
+const bn=x=>Number(x).toLocaleString("bn-BD");
+const ST={new:"নতুন",confirmed:"কনফার্মড",preparing:"তৈরি হচ্ছে",on_the_way:"পথে",delivered:"ডেলিভারড",cancelled:"বাতিল"};
+const CAT={veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম"};
+let tab="dash",F={st:"all",q:"",day:"all"},timer=null,maxId=null,openR=null;
+const $=id=>document.getElementById(id);
+const fail=e=>{if(e){alert(e.message);return true}};
+
+function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(()=>{o.stop();a.close()},350)}catch(e){}}
+
 async function start(){const{data}=await sb.auth.getSession();data.session?show():login()}
-function login(msg=""){app.innerHTML=`<h2>অ্যাডমিন লগইন</h2><div class="card"><input id="e" type="email" placeholder="ইমেইল"><br><input id="p" type="password" placeholder="পাসওয়ার্ড"><br><button id="go">লগইন</button> <small>${esc(msg)}</small></div>`;
-document.getElementById("go").onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:e.value,password:p.value});error?login("ইমেইল বা পাসওয়ার্ড ভুল"):show()}}
-async function show(){
-app.innerHTML=`<div class="row"><h2>অ্যাডমিন</h2><button id="out">লগআউট</button></div><div class="tabs"><button data-t="orders" class="${tab=="orders"?"on":""}">অর্ডার</button><button data-t="products" class="${tab=="products"?"on":""}">পণ্য</button></div><div id="c">লোড হচ্ছে...</div>`;
-out.onclick=async()=>{await sb.auth.signOut();login()};
-document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;show()});
-tab=="orders"?orders():products()}
-async function orders(){
-const{data,error}=await sb.from("orders").select("*").order("created_at",{ascending:false}).limit(100);
-if(error)return c.textContent="লোড করা যায়নি: "+error.message;
-c.innerHTML=data.length?data.map(o=>`<div class="card"><div class="row"><b>${esc(o.order_no)}</b><small>${new Date(o.created_at).toLocaleString("bn-BD")}</small></div>
-<div>${esc(o.name)} · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a><br>${esc(o.address)}${o.memo?"<br><small>"+esc(o.memo)+"</small>":""}</div>
-<div>${o.items.map(i=>esc(i.name_bn)+" × "+esc(i.qty)).join(", ")}</div>
-<div class="row"><b>মোট ৳${esc(o.total)} (ক্যাশ)</b><select data-o="${o.id}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${o.status==k?"selected":""}>${v}</option>`).join("")}</select></div></div>`).join(""):"<p>কোনো অর্ডার নেই।</p>";
-document.querySelectorAll("[data-o]").forEach(s=>s.onchange=async()=>{const{error}=await sb.from("orders").update({status:s.value}).eq("id",s.dataset.o);if(error)alert(error.message)})}
-async function products(){
-const{data,error}=await sb.from("products").select("*").order("id");
-if(error)return c.textContent="লোড করা যায়নি: "+error.message;
-c.innerHTML=`<div class="card"><b>নতুন পণ্য</b><br><input id="nb" placeholder="নাম (বাংলা)"><input id="ne" placeholder="Name (English)"><input id="ub" placeholder="একক (১ কেজি)" size="10"><input id="ue" placeholder="Unit (1 kg)" size="10"><input id="pr" type="number" min="0" placeholder="দাম ৳" style="width:90px"><input id="em" placeholder="🍅" size="3"><select id="ca"><option value="veg">সবজি</option><option value="fruit">ফল</option><option value="stap">মুদি</option><option value="dairy">দুধ-ডিম</option></select><button id="add">যোগ করুন</button></div>`+
-data.map(p=>`<div class="card row"><span>${esc(p.emoji)} <b>${esc(p.name_bn)}</b> <small>${esc(p.unit_bn)}</small></span><span>৳<input type="number" value="${esc(p.price)}" data-p="${p.id}" style="width:80px"> <button data-s="${p.id}" data-v="${p.in_stock}">${p.in_stock?"স্টকে আছে":"স্টক নেই"}</button> <button class="x" data-d="${p.id}">মুছুন</button></span></div>`).join("");
-add.onclick=async()=>{if(!nb.value||!pr.value)return alert("নাম ও দাম দিন");const{error}=await sb.from("products").insert({name_bn:nb.value,name_en:ne.value||null,unit_bn:ub.value,unit_en:ue.value,price:+pr.value,emoji:em.value||"🛒",category:ca.value});error?alert(error.message):products()};
-document.querySelectorAll("[data-p]").forEach(i=>i.onchange=async()=>{const{error}=await sb.from("products").update({price:+i.value}).eq("id",i.dataset.p);if(error)alert(error.message)});
-document.querySelectorAll("[data-s]").forEach(b=>b.onclick=async()=>{await sb.from("products").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.s);products()});
-document.querySelectorAll("[data-d]").forEach(b=>b.onclick=async()=>{if(confirm("মুছে ফেলবেন?")){await sb.from("products").delete().eq("id",b.dataset.d);products()}})}
+function login(msg=""){clearInterval(timer);app.innerHTML=`<h2>অ্যাডমিন লগইন</h2><div class="card"><input id="e" type="email" placeholder="ইমেইল"><br><input id="p" type="password" placeholder="পাসওয়ার্ড"><br><button id="go">লগইন</button> <small>${esc(msg)}</small></div>`;
+$("go").onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:$("e").value,password:$("p").value});error?login("ইমেইল বা পাসওয়ার্ড ভুল"):show()}}
+
+function show(){
+  clearInterval(timer);
+  const T=[["dash","📊 হিসাব"],["orders","🧾 অর্ডার"],["rest","🍽️ রেস্তোরাঁ"],["prod","🥬 মুদি"],["rid","🛵 রাইডার"]];
+  app.innerHTML=`<div class="row"><h2>অ্যাডমিন</h2><button id="out">লগআউট</button></div><div class="tabs">${T.map(([k,l])=>`<button data-t="${k}" class="${tab==k?"on":""}">${l}</button>`).join("")}</div><div id="c">লোড হচ্ছে...</div>`;
+  $("out").onclick=async()=>{await sb.auth.signOut();login()};
+  document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;show()});
+  ({dash,orders,rest,prod,rid})[tab]();
+}
+
+/* ---------- হিসাব ---------- */
+async function dash(){
+  const{data,error}=await sb.from("orders").select("*").order("created_at",{ascending:false}).limit(1000);
+  if(error)return $("c").textContent="লোড করা যায়নি: "+error.message;
+  const d0=new Date();d0.setHours(0,0,0,0);
+  const inR=(o,days)=>new Date(o.created_at)>=new Date(d0.getTime()-days*864e5);
+  const ok=data.filter(o=>o.status!="cancelled");
+  const sum=a=>a.reduce((s,o)=>s+Number(o.total),0);
+  const td=data.filter(o=>inR(o,0)),tdok=td.filter(o=>o.status!="cancelled");
+  const wk=ok.filter(o=>inR(o,6)),mo=ok.filter(o=>inR(o,29));
+  const cnt={};data.forEach(o=>cnt[o.status]=(cnt[o.status]||0)+1);
+  const top={};ok.forEach(o=>(o.items||[]).forEach(i=>{const n=i.name_bn||i.name;top[n]=(top[n]||0)+Number(i.qty||0)}));
+  const topL=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  $("c").innerHTML=`<div class="stats" style="margin-top:12px">
+  <div class="stat"><b>${bn(td.length)}</b>আজকের অর্ডার</div>
+  <div class="stat"><b>৳${bn(sum(tdok))}</b>আজকের বিক্রি</div>
+  <div class="stat"><b>৳${bn(sum(wk))}</b>গত ৭ দিন</div>
+  <div class="stat"><b>৳${bn(sum(mo))}</b>গত ৩০ দিন</div>
+  <div class="stat"><b>${bn(cnt.new||0)}</b>নতুন (অপেক্ষায়)</div>
+  <div class="stat"><b>${bn(cnt.cancelled||0)}</b>বাতিল</div></div>
+  <div class="card"><b>অবস্থা অনুযায়ী</b><br>${Object.entries(ST).map(([k,v])=>`<span class="tag">${v}: ${bn(cnt[k]||0)}</span> `).join("")}</div>
+  <div class="card"><b>সবচেয়ে বেশি বিক্রি</b>${topL.length?topL.map(([n,q],i)=>`<div class="row"><span>${bn(i+1)}. ${esc(n)}</span><b>${bn(q)}টি</b></div>`).join(""):"<p class='m'>এখনো তথ্য নেই।</p>"}</div>`;
+}
+
+/* ---------- অর্ডার ---------- */
+async function orders(first=true){
+  const[o,r,rd]=await Promise.all([
+    sb.from("orders").select("*").order("created_at",{ascending:false}).limit(200),
+    sb.from("restaurants").select("id,name_bn"),sb.from("riders").select("*").order("id")]);
+  if(o.error)return $("c").textContent="লোড করা যায়নি: "+o.error.message;
+  const RN=Object.fromEntries((r.data||[]).map(x=>[x.id,x.name_bn])),riders=rd.data||[];
+  const top=o.data.length?o.data[0].id:0;
+  if(maxId!==null&&top>maxId)beep();
+  maxId=top;
+  const d0=new Date();d0.setHours(0,0,0,0);
+  let list=o.data.filter(x=>(F.st=="all"||x.status==F.st)&&(F.day=="all"||new Date(x.created_at)>=d0)&&(!F.q||(x.order_no+" "+x.phone+" "+x.name).toLowerCase().includes(F.q.toLowerCase())));
+  const act=document.activeElement&&document.activeElement.id;
+  $("c").innerHTML=`<div class="card"><div class="row"><span>
+  <select id="fs"><option value="all">সব অবস্থা</option>${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${F.st==k?"selected":""}>${v}</option>`).join("")}</select>
+  <select id="fd"><option value="all">সব দিন</option><option value="today" ${F.day=="today"?"selected":""}>আজ</option></select>
+  <input id="fq" placeholder="অর্ডার নম্বর / ফোন / নাম" value="${esc(F.q)}"></span>
+  <small>প্রতি ২০ সেকেন্ডে নিজে হালনাগাদ হয় · ${bn(list.length)}টি</small></div></div>`+
+  (list.length?list.map(x=>`<div class="card ${x.status=="new"?"new":""}" id="o${x.id}"><div class="row"><b>${esc(x.order_no)}</b><small>${new Date(x.created_at).toLocaleString("bn-BD")}</small></div>
+  <div>${esc(x.name)} · <a href="tel:${esc(x.phone)}">${esc(x.phone)}</a><br>${esc(x.address)}${x.memo?"<br><small>নোট: "+esc(x.memo)+"</small>":""}</div>
+  <div class="m">${x.restaurant_id?"🍽️ "+esc(RN[x.restaurant_id]||"রেস্তোরাঁ #"+x.restaurant_id):"🥬 মুদি বাজার"}</div>
+  <div>${(x.items||[]).map(i=>esc(i.name_bn||i.name)+" × "+esc(i.qty)).join(", ")}</div>
+  <div class="row"><b>মোট ৳${bn(x.total)} <small>(সাব ${bn(x.subtotal)} + ডেলিভারি ${bn(x.delivery)}, ক্যাশ)</small></b>
+  <span><select data-rd="${x.id}"><option value="">রাইডার নেই</option>${riders.map(z=>`<option value="${z.id}" ${x.rider_id==z.id?"selected":""}>${esc(z.name)}${z.is_available?"":" (ব্যস্ত)"}</option>`).join("")}</select>
+  <select data-o="${x.id}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${x.status==k?"selected":""}>${v}</option>`).join("")}</select>
+  <button class="g" data-pr="${x.id}">🖨️</button><button class="x" data-del="${x.id}">মুছুন</button></span></div></div>`).join(""):"<p>কোনো অর্ডার নেই।</p>");
+  const O=Object.fromEntries(o.data.map(x=>[x.id,x]));
+  $("fs").onchange=e=>{F.st=e.target.value;orders()};$("fd").onchange=e=>{F.day=e.target.value;orders()};
+  $("fq").oninput=e=>{F.q=e.target.value;clearTimeout(window._t);window._t=setTimeout(()=>orders(),350)};
+  if(act==="fq"){const f=$("fq");f.focus();f.setSelectionRange(f.value.length,f.value.length)}
+  document.querySelectorAll("[data-o]").forEach(s=>s.onchange=async()=>{if(fail((await sb.from("orders").update({status:s.value}).eq("id",s.dataset.o)).error))orders()});
+  document.querySelectorAll("[data-rd]").forEach(s=>s.onchange=async()=>{fail((await sb.from("orders").update({rider_id:s.value||null}).eq("id",s.dataset.rd)).error)});
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("এই অর্ডার চিরতরে মুছে ফেলবেন?")){if(!fail((await sb.from("orders").delete().eq("id",b.dataset.del)).error))orders()}});
+  document.querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>{const x=O[b.dataset.pr];
+    const w=document.createElement("div");w.className="pr";w.innerHTML=`<h3>হগলতান · ${esc(x.order_no)}</h3><p>${esc(x.name)} · ${esc(x.phone)}<br>${esc(x.address)}</p>${(x.items||[]).map(i=>`<div>${esc(i.name_bn||i.name)} × ${esc(i.qty)} = ৳${bn(i.price*i.qty)}</div>`).join("")}<hr><div>সাবটোটাল ৳${bn(x.subtotal)}</div><div>ডেলিভারি ৳${bn(x.delivery)}</div><b>মোট ৳${bn(x.total)} (ক্যাশ অন ডেলিভারি)</b>`;
+    document.body.appendChild(w);print();w.remove()});
+  clearInterval(timer);timer=setInterval(()=>{if(tab=="orders"&&!document.querySelector("select:focus"))orders(false)},20000);
+}
+
+/* ---------- রেস্তোরাঁ ও মেনু ---------- */
+async function rest(){
+  const{data,error}=await sb.from("restaurants").select("*,menu_items(*)").order("id");
+  if(error)return $("c").textContent="লোড করা যায়নি: "+error.message;
+  $("c").innerHTML=`<div class="card"><b>নতুন রেস্তোরাঁ</b><br><input id="rn" placeholder="নাম (বাংলা)"><input id="rc" placeholder="খাবারের ধরন"><input id="ra" placeholder="এলাকা"><input id="rp" placeholder="ফোন" size="12"><input id="rf" type="number" min="0" placeholder="ডেলিভারি ফি" style="width:110px"><input id="rm" type="number" min="0" placeholder="ন্যূনতম অর্ডার" style="width:120px"><input id="rt" type="number" min="0" placeholder="মিনিট" style="width:80px"><button id="radd">যোগ করুন</button></div>`+
+  data.map(r=>`<div class="card"><div class="row"><b>${esc(r.name_bn)}</b><span>
+  <button data-open="${r.id}" data-v="${r.is_open}" class="${r.is_open?"":"g"}">${r.is_open?"🟢 খোলা":"⚪ বন্ধ"}</button>
+  <button class="g" data-tg="${r.id}">${openR==r.id?"মেনু লুকান":"মেনু ("+bn((r.menu_items||[]).length)+")"}</button>
+  <button class="x" data-rdel="${r.id}">মুছুন</button></span></div>
+  <div class="m">ধরন <input data-rf="cuisine" data-id="${r.id}" value="${esc(r.cuisine)}" size="12"> এলাকা <input data-rf="area" data-id="${r.id}" value="${esc(r.area)}" size="10"> ফোন <input data-rf="phone" data-id="${r.id}" value="${esc(r.phone)}" size="12"><br>
+  ডেলিভারি ৳<input data-rf="delivery_fee" data-id="${r.id}" type="number" value="${esc(r.delivery_fee)}" style="width:70px"> ন্যূনতম ৳<input data-rf="min_order" data-id="${r.id}" type="number" value="${esc(r.min_order)}" style="width:80px"> মিনিট <input data-rf="prep_time_min" data-id="${r.id}" type="number" value="${esc(r.prep_time_min)}" style="width:60px"></div>
+  ${openR==r.id?`<div class="sub"><div class="card"><b>নতুন আইটেম</b><br><input id="mn" placeholder="নাম"><input id="md" placeholder="বিবরণ"><input id="mp" type="number" min="0" placeholder="দাম ৳" style="width:90px"><input id="me" placeholder="🍛" size="3"><button data-madd="${r.id}">যোগ করুন</button></div>
+  ${(r.menu_items||[]).sort((a,b)=>a.id-b.id).map(m=>`<div class="row" style="padding:6px 0;border-bottom:1px solid #eee"><span>${esc(m.emoji)} <b>${esc(m.name_bn)}</b> <small>${esc(m.description_bn)}</small></span><span>৳<input type="number" value="${esc(m.price)}" data-mp="${m.id}" style="width:80px"><button data-ms="${m.id}" data-v="${m.in_stock}" class="${m.in_stock?"":"g"}">${m.in_stock?"আছে":"নেই"}</button><button class="x" data-md="${m.id}">মুছুন</button></span></div>`).join("")||"<p class='m'>কোনো আইটেম নেই।</p>"}</div>`:""}</div>`).join("");
+  $("radd").onclick=async()=>{if(!$("rn").value)return alert("নাম দিন");if(!fail((await sb.from("restaurants").insert({name_bn:$("rn").value,cuisine:$("rc").value||null,area:$("ra").value||null,phone:$("rp").value||null,delivery_fee:+$("rf").value||0,min_order:+$("rm").value||0,prep_time_min:+$("rt").value||null})).error))rest()};
+  document.querySelectorAll("[data-open]").forEach(b=>b.onclick=async()=>{if(!fail((await sb.from("restaurants").update({is_open:b.dataset.v!="true"}).eq("id",b.dataset.open)).error))rest()});
+  document.querySelectorAll("[data-tg]").forEach(b=>b.onclick=()=>{openR=openR==+b.dataset.tg?null:+b.dataset.tg;rest()});
+  document.querySelectorAll("[data-rdel]").forEach(b=>b.onclick=async()=>{if(confirm("রেস্তোরাঁ ও এর সব মেনু মুছে ফেলবেন?")){await sb.from("menu_items").delete().eq("restaurant_id",b.dataset.rdel);if(!fail((await sb.from("restaurants").delete().eq("id",b.dataset.rdel)).error))rest()}});
+  document.querySelectorAll("[data-rf]").forEach(i=>i.onchange=async()=>{const k=i.dataset.rf,n=i.type=="number";fail((await sb.from("restaurants").update({[k]:n?(i.value===""?null:+i.value):(i.value||null)}).eq("id",i.dataset.id)).error)});
+  document.querySelectorAll("[data-madd]").forEach(b=>b.onclick=async()=>{if(!$("mn").value||!$("mp").value)return alert("নাম ও দাম দিন");if(!fail((await sb.from("menu_items").insert({restaurant_id:+b.dataset.madd,name_bn:$("mn").value,description_bn:$("md").value||null,price:+$("mp").value,emoji:$("me").value||"🍽️"})).error))rest()});
+  document.querySelectorAll("[data-mp]").forEach(i=>i.onchange=async()=>{fail((await sb.from("menu_items").update({price:+i.value}).eq("id",i.dataset.mp)).error)});
+  document.querySelectorAll("[data-ms]").forEach(b=>b.onclick=async()=>{if(!fail((await sb.from("menu_items").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.ms)).error))rest()});
+  document.querySelectorAll("[data-md]").forEach(b=>b.onclick=async()=>{if(confirm("আইটেমটি মুছবেন?")&&!fail((await sb.from("menu_items").delete().eq("id",b.dataset.md)).error))rest()});
+}
+
+/* ---------- মুদি পণ্য ---------- */
+async function prod(){
+  const{data,error}=await sb.from("products").select("*").order("id");
+  if(error)return $("c").textContent="লোড করা যায়নি: "+error.message;
+  const seen={},dup=new Set();data.forEach(p=>{const k=p.name_bn+"|"+p.unit_bn;seen[k]?dup.add(p.id):seen[k]=1});
+  const cf=window._pc||"all",list=data.filter(p=>cf=="all"||p.category==cf);
+  $("c").innerHTML=`<div class="card"><b>নতুন পণ্য</b><br><input id="nb" placeholder="নাম (বাংলা)"><input id="ne" placeholder="Name (English)"><input id="ub" placeholder="একক (১ কেজি)" size="10"><input id="ue" placeholder="Unit (1 kg)" size="10"><input id="pr" type="number" min="0" placeholder="দাম ৳" style="width:90px"><input id="em" placeholder="🍅" size="3"><select id="ca">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select><button id="add">যোগ করুন</button></div>
+  <div class="tabs" style="margin-top:8px"><button data-pc="all" class="${cf=="all"?"on":""}">সব (${bn(data.length)})</button>${Object.entries(CAT).map(([k,v])=>`<button data-pc="${k}" class="${cf==k?"on":""}">${v}</button>`).join("")}</div>
+  ${dup.size?`<p class="m">⚠️ ${bn(dup.size)}টি সম্ভাব্য ডুপ্লিকেট পণ্য আছে (নামের পাশে চিহ্ন দেওয়া)।</p>`:""}`+
+  list.map(p=>`<div class="card row"><span>${esc(p.emoji)} <b>${esc(p.name_bn)}</b> <small>${esc(p.unit_bn)} · ${CAT[p.category]||""}</small>${dup.has(p.id)?' <span class="tag" style="background:#FDECC8">ডুপ্লিকেট?</span>':""}</span><span>৳<input type="number" value="${esc(p.price)}" data-p="${p.id}" style="width:80px"> <button data-s="${p.id}" data-v="${p.in_stock}" class="${p.in_stock?"":"g"}">${p.in_stock?"স্টকে আছে":"স্টক নেই"}</button> <button class="x" data-d="${p.id}">মুছুন</button></span></div>`).join("");
+  $("add").onclick=async()=>{if(!$("nb").value||!$("pr").value)return alert("নাম ও দাম দিন");if(!fail((await sb.from("products").insert({name_bn:$("nb").value,name_en:$("ne").value||null,unit_bn:$("ub").value,unit_en:$("ue").value,price:+$("pr").value,emoji:$("em").value||"🛒",category:$("ca").value})).error))prod()};
+  document.querySelectorAll("[data-pc]").forEach(b=>b.onclick=()=>{window._pc=b.dataset.pc;prod()});
+  document.querySelectorAll("[data-p]").forEach(i=>i.onchange=async()=>{fail((await sb.from("products").update({price:+i.value}).eq("id",i.dataset.p)).error)});
+  document.querySelectorAll("[data-s]").forEach(b=>b.onclick=async()=>{await sb.from("products").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.s);prod()});
+  document.querySelectorAll("[data-d]").forEach(b=>b.onclick=async()=>{if(confirm("মুছে ফেলবেন?")){await sb.from("products").delete().eq("id",b.dataset.d);prod()}});
+}
+
+/* ---------- রাইডার ---------- */
+async function rid(){
+  const[r,o]=await Promise.all([sb.from("riders").select("*").order("id"),sb.from("orders").select("rider_id,status")]);
+  if(r.error)return $("c").textContent="লোড করা যায়নি: "+r.error.message;
+  const act={};(o.data||[]).forEach(x=>{if(x.rider_id&&!["delivered","cancelled"].includes(x.status))act[x.rider_id]=(act[x.rider_id]||0)+1});
+  $("c").innerHTML=`<div class="card"><b>নতুন রাইডার</b><br><input id="rn" placeholder="নাম"><input id="rp" placeholder="ফোন"><button id="radd">যোগ করুন</button></div>`+
+  (r.data.length?r.data.map(x=>`<div class="card row"><span><b>${esc(x.name)}</b> · <a href="tel:${esc(x.phone)}">${esc(x.phone)}</a> <small>চলমান অর্ডার: ${bn(act[x.id]||0)}</small></span><span><button data-av="${x.id}" data-v="${x.is_available}" class="${x.is_available?"":"g"}">${x.is_available?"🟢 পাওয়া যাচ্ছে":"🔴 ব্যস্ত"}</button><button class="x" data-rd="${x.id}">মুছুন</button></span></div>`).join(""):"<p class='m'>কোনো রাইডার নেই।</p>");
+  $("radd").onclick=async()=>{if(!$("rn").value||!$("rp").value)return alert("নাম ও ফোন দিন");if(!fail((await sb.from("riders").insert({name:$("rn").value,phone:$("rp").value})).error))rid()};
+  document.querySelectorAll("[data-av]").forEach(b=>b.onclick=async()=>{if(!fail((await sb.from("riders").update({is_available:b.dataset.v!="true"}).eq("id",b.dataset.av)).error))rid()});
+  document.querySelectorAll("[data-rd]").forEach(b=>b.onclick=async()=>{if(confirm("রাইডার মুছবেন?")&&!fail((await sb.from("riders").delete().eq("id",b.dataset.rd)).error))rid()});
+}
 start();
 </script></body></html>
