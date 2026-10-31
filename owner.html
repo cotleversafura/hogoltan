@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>হগলতান – রেস্তোরাঁ প্যানেল</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<style>
+body{font-family:system-ui,'Noto Sans Bengali',sans-serif;margin:0;background:#FBF3F6;color:#2a1620}
+.w{max-width:900px;margin:auto;padding:16px}
+.card{background:#fff;border:1px solid #EBD3DD;border-radius:10px;padding:12px;margin:10px 0}
+input,select,button{font:inherit;padding:7px;border:1px solid #D9BBC8;border-radius:6px;margin:2px}
+button{background:#D70F64;color:#fff;border:0;cursor:pointer}button.x{background:#C0392B}button.g{background:#fff;color:#2a1620;border:1px solid #D9BBC8}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.tabs button{background:#fff;color:#2a1620;border:1px solid #D9BBC8}.tabs button.on{background:#D70F64;color:#fff;border-color:#D70F64}
+small,.m{color:#7a6370}.row{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.new{border-left:5px solid #E8A317}.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;background:#FFE3EF}
+</style></head><body><div class="w" id="app"></div>
+<script>
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY),app=document.getElementById("app");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const bn=x=>Number(x).toLocaleString("bn-BD"),$=id=>document.getElementById(id);
+const ST={new:"নতুন",confirmed:"কনফার্মড",preparing:"তৈরি হচ্ছে",on_the_way:"পথে",delivered:"ডেলিভারড",cancelled:"বাতিল"};
+let tab="orders",R=[],rid=null,timer=null,maxId=null,F="all";
+const fail=e=>{if(e){alert(e.message);return true}};
+function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(()=>{o.stop();a.close()},350)}catch(e){}}
+async function upl(f,folder){const ext=(f.type.split("/")[1]||"jpg").replace("jpeg","jpg"),path=folder+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
+  const{error}=await sb.storage.from("images").upload(path,f,{contentType:f.type,cacheControl:"31536000"});if(error){alert(error.message);return null}
+  return sb.storage.from("images").getPublicUrl(path).data.publicUrl}
+const imgBtn=(tb,id)=>`<label class="g" style="display:inline-block;cursor:pointer;border:1px solid #D9BBC8;border-radius:6px;padding:6px 9px;margin:2px">ছবি<input type="file" accept="image/jpeg,image/png,image/webp" data-img="${tb}:${id}" hidden></label>`;
+const thumb=u=>u?`<img src="${esc(u)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;vertical-align:middle">`:"";
+function bindImg(){document.querySelectorAll("[data-img]").forEach(i=>i.onchange=async()=>{const[tb,id]=i.dataset.img.split(":"),f=i.files[0];if(!f)return;
+  if(f.size>3*1024*1024)return alert("ছবি ৩ MB-এর কম হতে হবে");const u=await upl(f,tb);if(!u)return;
+  if(fail((await sb.from(tb).update({image_url:u}).eq("id",id)).error))return;
+  if(tb==="restaurants")await loadR();show()})}
+
+async function start(){const{data}=await sb.auth.getSession();data.session?load():login()}
+function login(msg=""){clearInterval(timer);app.innerHTML=`<h2>রেস্তোরাঁ প্যানেল – লগইন</h2><div class="card"><input id="e" type="email" placeholder="ইমেইল"><br><input id="p" type="password" placeholder="পাসওয়ার্ড"><br><button id="go">লগইন</button> <small>${esc(msg)}</small></div>`;
+$("go").onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:$("e").value,password:$("p").value});error?login("ইমেইল বা পাসওয়ার্ড ভুল"):load()}}
+async function loadR(){
+  const{data:ow}=await sb.from("restaurant_owners").select("restaurant_id");
+  const ids=(ow||[]).map(o=>o.restaurant_id);
+  if(!ids.length){R=[];return}
+  const{data}=await sb.from("restaurants").select("*").in("id",ids).order("id");R=data||[];
+  if(!rid||!R.find(r=>r.id===rid))rid=R[0]?.id??null}
+async function load(){await loadR();show()}
+function show(){
+  clearInterval(timer);
+  const head=`<div class="row"><h2>রেস্তোরাঁ প্যানেল</h2><button id="out" class="g">লগআউট</button></div>`;
+  if(!R.length){app.innerHTML=head+`<div class="card">আপনার অ্যাকাউন্টে এখনো কোনো রেস্তোরাঁ যুক্ত নেই। হগলতান অ্যাডমিনকে আপনার ইমেইল জানিয়ে যুক্ত করিয়ে নিন।</div>`;$("out").onclick=async()=>{await sb.auth.signOut();login()};return}
+  const r=R.find(x=>x.id===rid);
+  app.innerHTML=head+`<div class="card row"><span><b>${thumb(r.image_url)} ${esc(r.name_bn)}</b> <span class="tag">${r.is_open?"🟢 খোলা":"⚪ বন্ধ"}</span></span>
+  ${R.length>1?`<select id="rs">${R.map(x=>`<option value="${x.id}" ${x.id===rid?"selected":""}>${esc(x.name_bn)}</option>`).join("")}</select>`:""}</div>
+  <div class="tabs">${[["orders","অর্ডার"],["menu","মেনু"],["info","রেস্তোরাঁ"]].map(([k,l])=>`<button data-t="${k}" class="${tab==k?"on":""}">${l}</button>`).join("")}</div><div id="c">লোড হচ্ছে...</div>`;
+  $("out").onclick=async()=>{await sb.auth.signOut();login()};
+  if($("rs"))$("rs").onchange=e=>{rid=+e.target.value;maxId=null;show()};
+  document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;show()});
+  ({orders,menu,info})[tab]();
+}
+
+async function orders(){
+  const{data,error}=await sb.from("orders").select("*").eq("restaurant_id",rid).order("created_at",{ascending:false}).limit(100);
+  if(error)return $("c").textContent="লোড করা যায়নি: "+error.message;
+  const top=data.length?data[0].id:0;if(maxId!==null&&top>maxId)beep();maxId=top;
+  const list=data.filter(o=>F==="all"||o.status===F);
+  $("c").innerHTML=`<div class="card row"><select id="fs"><option value="all">সব অবস্থা</option>${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${F===k?"selected":""}>${v}</option>`).join("")}</select><small>প্রতি ২০ সেকেন্ডে নিজে হালনাগাদ হয় · ${bn(list.length)}টি</small></div>`+
+  (list.length?list.map(o=>`<div class="card ${o.status=="new"?"new":""}"><div class="row"><b>${esc(o.order_no)}</b><small>${new Date(o.created_at).toLocaleString("bn-BD")}</small></div>
+  <div>${esc(o.name)} · <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a><br>${esc(o.address)}${o.memo?"<br><small>নোট: "+esc(o.memo)+"</small>":""}</div>
+  <div>${(o.items||[]).map(i=>esc(i.name_bn||i.name)+" × "+esc(i.qty)).join(", ")}</div>
+  <div class="row"><b>মোট ৳${bn(o.total)} <small>(ক্যাশ)</small></b><select data-o="${o.id}">${Object.entries(ST).map(([k,v])=>`<option value="${k}" ${o.status==k?"selected":""}>${v}</option>`).join("")}</select></div></div>`).join(""):"<p>কোনো অর্ডার নেই।</p>");
+  $("fs").onchange=e=>{F=e.target.value;orders()};
+  document.querySelectorAll("[data-o]").forEach(s=>s.onchange=async()=>{if(fail((await sb.from("orders").update({status:s.value}).eq("id",s.dataset.o)).error))orders()});
+  timer=setInterval(()=>{if(tab=="orders"&&!document.querySelector("select:focus"))orders()},20000);
+}
+
+async function menu(){
+  const{data,error}=await sb.from("menu_items").select("*").eq("restaurant_id",rid).order("id");
+  if(error)return $("c").textContent="লোড করা যায়নি: "+error.message;
+  $("c").innerHTML=`<div class="card"><b>নতুন আইটেম</b><br><input id="mn" placeholder="নাম"><input id="md" placeholder="বিবরণ"><input id="mp" type="number" min="0" placeholder="দাম ৳" style="width:90px"><button id="madd">যোগ করুন</button></div>`+
+  (data.map(m=>`<div class="card row"><span>${thumb(m.image_url)} <b>${esc(m.name_bn)}</b> <small>${esc(m.description_bn)}</small></span><span>${imgBtn("menu_items",m.id)}৳<input type="number" value="${esc(m.price)}" data-mp="${m.id}" style="width:80px"><button data-ms="${m.id}" data-v="${m.in_stock}" class="${m.in_stock?"":"g"}">${m.in_stock?"আছে":"নেই"}</button><button class="x" data-md="${m.id}">মুছুন</button></span></div>`).join("")||"<p class='m'>কোনো আইটেম নেই।</p>");
+  $("madd").onclick=async()=>{if(!$("mn").value||!$("mp").value)return alert("নাম ও দাম দিন");if(!fail((await sb.from("menu_items").insert({restaurant_id:rid,name_bn:$("mn").value,description_bn:$("md").value||null,price:+$("mp").value})).error))menu()};
+  document.querySelectorAll("[data-mp]").forEach(i=>i.onchange=async()=>{fail((await sb.from("menu_items").update({price:+i.value}).eq("id",i.dataset.mp)).error)});
+  document.querySelectorAll("[data-ms]").forEach(b=>b.onclick=async()=>{if(!fail((await sb.from("menu_items").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.ms)).error))menu()});
+  document.querySelectorAll("[data-md]").forEach(b=>b.onclick=async()=>{if(confirm("আইটেমটি মুছবেন?")&&!fail((await sb.from("menu_items").delete().eq("id",b.dataset.md)).error))menu()});
+  bindImg();
+}
+
+function info(){
+  const r=R.find(x=>x.id===rid);
+  $("c").innerHTML=`<div class="card"><div class="row"><b>এখন অর্ডার নেওয়া হচ্ছে?</b><button id="tg" class="${r.is_open?"":"g"}">${r.is_open?"🟢 খোলা (বন্ধ করুন)":"⚪ বন্ধ (খুলুন)"}</button></div></div>
+  <div class="card"><b>তথ্য</b><br>ধরন <input data-rf="cuisine" value="${esc(r.cuisine)}"> ফোন <input data-rf="phone" value="${esc(r.phone)}"> প্রস্তুতির সময় (মিনিট) <input data-rf="prep_time_min" type="number" value="${esc(r.prep_time_min)}" style="width:70px"><br>কভার ছবি ${thumb(r.image_url)} ${imgBtn("restaurants",r.id)}
+  <p class="m">নাম, ডেলিভারি ফি (৳${bn(r.delivery_fee)}) ও ন্যূনতম অর্ডার (৳${bn(r.min_order)}) শুধু অ্যাডমিন বদলাতে পারেন।</p></div>`;
+  $("tg").onclick=async()=>{if(!fail((await sb.from("restaurants").update({is_open:!r.is_open}).eq("id",r.id)).error)){await loadR();show()}};
+  document.querySelectorAll("[data-rf]").forEach(i=>i.onchange=async()=>{const k=i.dataset.rf,n=i.type=="number";if(!fail((await sb.from("restaurants").update({[k]:n?(i.value===""?null:+i.value):(i.value||null)}).eq("id",r.id)).error))await loadR()});
+  bindImg();
+}
+start();
+</script></body></html>
