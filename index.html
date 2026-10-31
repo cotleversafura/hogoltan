@@ -97,6 +97,7 @@ const tk=x=>"৳"+n(x);
 const nm=(o,k="name")=>L==="en"&&o[k+"_en"]?o[k+"_en"]:o[k+"_bn"];
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify({cart:S.cart,cartRest:S.cartRest}))}catch(e){}};
+const cuEm=r=>{const c=r.cuisine||"";return c.includes("বিরিয়ানি")?"🍛":c.includes("বাঙালি")?"🍚":c.includes("ফাস্ট")?"🍔":em((r.menu_items||[])[0]?.emoji)};
 const em=e=>e==="🫘"?"🍲":(e||"🛒");
 
 async function load(){
@@ -137,7 +138,7 @@ function render(){
   }
   if(S.tab==="rest"){
     const list=S.R.filter(r=>!q||(r.name_bn+" "+(r.cuisine||"")+" "+(r.area||"")+" "+(r.menu_items||[]).map(m=>m.name_bn).join(" ")).toLowerCase().includes(q));
-    v.innerHTML=list.length?`<div class="grid">${list.map(r=>`<div class="card rc ${r.is_open?"":"closed"}" data-r="${r.id}"><div class="img">${em((r.menu_items||[])[0]?.emoji)}</div><div class="b"><h3>${esc(nm(r,"name"))}</h3><div class="m">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="m">⏱ ${n(r.prep_time_min||0)} ${t("min_")} · ${t("fee")} ${tk(r.delivery_fee)}</div><span class="tag ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div></div>`).join("")}</div>`:`<p>${t("none")}</p>`;
+    v.innerHTML=list.length?`<div class="grid">${list.map(r=>`<div class="card rc ${r.is_open?"":"closed"}" data-r="${r.id}"><div class="img">${cuEm(r)}</div><div class="b"><h3>${esc(nm(r,"name"))}</h3><div class="m">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="m">⏱ ${n(r.prep_time_min||0)} ${t("min_")} · ${t("fee")} ${tk(r.delivery_fee)}</div><span class="tag ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div></div>`).join("")}</div>`:`<p>${t("none")}</p>`;
   }else{
     const cats=["all","veg","fruit","stap","dairy"];
     const list=S.P.filter(p=>p.in_stock&&(S.cat==="all"||p.category===S.cat)&&(!q||(p.name_bn+" "+(p.name_en||"")).toLowerCase().includes(q)));
@@ -147,8 +148,8 @@ function render(){
 }
 
 function find(key){
-  if(key[0]==="m"){for(const r of S.R){const m=(r.menu_items||[]).find(x=>"m"+x.id===key);if(m)return{key,name:nm(m),price:+m.price,e:em(m.emoji),rest:r.id}}}
-  else{const p=S.P.find(x=>"p"+x.id===key);if(p)return{key,name:nm(p)+" ("+(p.unit_bn||"")+")",price:+p.price,e:em(p.emoji),rest:null}}
+  if(key[0]==="m"){for(const r of S.R){const m=(r.menu_items||[]).find(x=>"m"+x.id===key);if(m)return{key,name:nm(m),bn:m.name_bn,price:+m.price,e:em(m.emoji),rest:r.id}}}
+  else{const p=S.P.find(x=>"p"+x.id===key);if(p)return{key,name:nm(p)+" ("+(p.unit_bn||"")+")",bn:p.name_bn+" ("+(p.unit_bn||"")+")",price:+p.price,e:em(p.emoji),rest:null}}
 }
 function addItem(key){
   const it=find(key);if(!it)return;
@@ -185,7 +186,7 @@ async function placeOrder(){
   const b=$("place");b.disabled=true;b.textContent=t("placing");
   const no="HG"+Date.now().toString(36).toUpperCase().slice(-6);
   const body={order_no:no,name,phone,address:addr,memo:memo||null,
-    items:Object.values(S.cart).map(i=>({name:i.name,price:i.price,qty:i.q})),
+    items:Object.values(S.cart).map(i=>({name_bn:i.bn||i.name,name:i.name,price:i.price,qty:i.q})),
     subtotal:sub(),delivery:fee(),total:sub()+fee(),status:"new",restaurant_id:S.cartRest,rider_id:null};
   try{
     const r=await fetch(SB+"/rest/v1/orders",{method:"POST",headers:{...H,Prefer:"return=minimal"},body:JSON.stringify(body)});
