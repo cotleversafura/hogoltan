@@ -75,12 +75,16 @@ h2.t{font-size:20px;margin:6px 0 12px}
 .sx i{display:block;width:26px;height:26px;border-radius:50%;background:var(--ln);margin:0 auto 4px;line-height:26px;font-style:normal;color:#fff;position:relative}
 .sx.on{color:var(--ok);font-weight:700}.sx.on i{background:var(--ok)}
 .trk{max-width:520px}
+.fi{width:100%;padding:11px;border:1px solid var(--ln);border-radius:10px;font:inherit;background:var(--bg);color:var(--tx)}
+.tag{background:#ffe3ef;color:var(--p);border-radius:10px;padding:2px 10px;font-size:12px;font-weight:700}
+.lk{color:var(--p);font-weight:600;text-decoration:underline;font-size:14px}
 footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
 </style>
 </head>
 <body>
 <header><div class="bar">
   <span class="logo" id="logo">🛵 হগলতান</span><span class="sp"></span>
+  <button class="pill" id="acc"></button>
   <button class="pill" id="lang"></button>
   <button class="cartbtn" id="cartbtn"></button>
 </div></header>
@@ -97,12 +101,13 @@ footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
 <div class="dr" id="dr"><div class="pn" id="pn"></div></div>
 <footer id="foot"></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const SB="https://zphbqwkvsacptggytbmr.supabase.co",KEY="sb_publishable_i6_Cye57ryc5jSzHdmem-A_7WDig9Zd";
 const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
 const T={
-bn:{h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:"💵 ক্যাশ অন ডেলিভারি",c2:"🍽️ রেস্তোরাঁর খাবার",c3:"🥬 তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:"🍽️ রেস্তোরাঁ",groc:"🥬 মুদি বাজার",trk:"📦 অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
-en:{h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:"💵 Cash on delivery",c2:"🍽️ Restaurant food",c3:"🥬 Fresh grocery",ph:"Search restaurants, dishes or items…",rest:"🍽️ Restaurants",groc:"🥬 Grocery",trk:"📦 Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
+bn:{login:"লগইন",signup:"অ্যাকাউন্ট খুলুন",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",have:"অ্যাকাউন্ট আছে? লগইন করুন",nohave:"নতুন? অ্যাকাউন্ট খুলুন",acc:"আমার অ্যাকাউন্ট",saveP:"সংরক্ষণ করুন",saved:"সংরক্ষিত হয়েছে",logout:"লগআউট",myorders:"আমার অর্ডার",noorders:"এখনো কোনো অর্ডার নেই",reorder:"আবার অর্ডার",trackb:"ট্র্যাক",miss:"কিছু আইটেম এখন পাওয়া যাচ্ছে না, বাদ দেওয়া হয়েছে",closedR:"রেস্তোরাঁটি এখন বন্ধ",saveaddr:"ঠিকানা ও তথ্য সংরক্ষণ করুন",hint:"লগইন করলে ঠিকানা সংরক্ষিত থাকবে, আগের অর্ডার দেখা ও আবার অর্ডার করা যাবে",shortPw:"সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন",bad2:"নাম ও সঠিক ফোন নম্বর দিন",confirmMail:"আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। লিংকে চাপুন, তারপর লগইন করুন।",wrongPw:"ইমেইল বা পাসওয়ার্ড ভুল",exists:"এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন",h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:"💵 ক্যাশ অন ডেলিভারি",c2:"🍽️ রেস্তোরাঁর খাবার",c3:"🥬 তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:"🍽️ রেস্তোরাঁ",groc:"🥬 মুদি বাজার",trk:"📦 অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
+en:{login:"Log in",signup:"Create account",email:"Email",pw:"Password (min 6 characters)",have:"Have an account? Log in",nohave:"New here? Create account",acc:"My account",saveP:"Save",saved:"Saved",logout:"Log out",myorders:"My orders",noorders:"No orders yet",reorder:"Reorder",trackb:"Track",miss:"Some items are unavailable and were skipped",closedR:"This restaurant is closed now",saveaddr:"Save my address & details",hint:"Log in to save your address, see past orders and reorder",shortPw:"Enter a valid email and a password of 6+ characters",bad2:"Enter your name and a valid phone",confirmMail:"A confirmation link was sent to your email. Tap it, then log in.",wrongPw:"Wrong email or password",exists:"An account with this email exists, please log in",h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:"💵 Cash on delivery",c2:"🍽️ Restaurant food",c3:"🥬 Fresh grocery",ph:"Search restaurants, dishes or items…",rest:"🍽️ Restaurants",groc:"🥬 Grocery",trk:"📦 Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
 const GROC_FEE=40,SEQ=["new","confirmed","preparing","on_the_way","delivered"];
 let L=localStorage.getItem("lang")||"bn",t=k=>T[L][k];
 let S={tab:"rest",cat:"all",rid:null,q:"",R:[],P:[],cart:{},cartRest:null,loading:true,tn:""};
@@ -133,7 +138,7 @@ const ctl=(key,dis)=>{const c=S.cart[key];return c?`<span class="st"><button dat
 
 function render(){
   document.documentElement.lang=L;
-  $("lang").textContent=L==="bn"?"English":"বাংলা";
+  $("lang").textContent=L==="bn"?"English":"বাংলা";$("acc").textContent=accLbl();
   $("h1").textContent=t("h1");$("sub").textContent=t("sub");$("q").placeholder=t("ph");$("foot").textContent=t("foot");
   $("chips").innerHTML=["c1","c2","c3"].map(k=>`<span>${t(k)}</span>`).join("");
   $("tabs").innerHTML=["rest","groc","trk"].map(k=>`<button class="tab ${S.tab===k&&!S.rid?"on":""}" data-t="${k}">${t(k)}</button>`).join("");
@@ -143,6 +148,7 @@ function render(){
   if(cnt)f.innerHTML=`<span>🛒 ${t("view")} · ${n(cnt)}</span><span>${tk(sub())}</span>`;
   const v=$("view"),q=S.q.toLowerCase();
   if(S.loading){v.innerHTML=`<div class="grid">${"<div class='sk'></div>".repeat(6)}</div>`;return}
+  if(S.tab==="acc"&&!S.rid){accView();return}
   if(S.tab==="trk"&&!S.rid){v.innerHTML=`<div class="card info trk"><h2>${t("track")}</h2><div class="row" style="margin-top:12px;gap:8px"><input id="tn" placeholder="${t("tno")}" value="${esc(S.tn)}"><button class="add" id="tgo">${t("tgo")}</button></div><div id="tr"></div></div>`;
     if(S.tn)trackShow();return}
   if(S.rid){
@@ -184,7 +190,7 @@ function openCart(){
   (items.length?`${items.map(i=>`<div class="row"><span>${i.e} ${esc(i.name)}<div class="mu">${tk(i.price)}</div></span><span class="st"><button data-q="${i.key}" data-d="-1">−</button>${n(i.q)}<button data-q="${i.key}" data-d="1">+</button></span></div>`).join("")}
   <hr style="border:0;border-top:1px solid var(--ln)">
   <div class="row"><span>${t("sub_t")}</span><b>${tk(sub())}</b></div><div class="row"><span>${t("del")}</span><b>${tk(fee())}</b></div><div class="row"><span>${t("tot")}</span><b>${tk(sub()+fee())}</b></div>
-  <input id="f_name" placeholder="${t("name")}" maxlength="100"><input id="f_phone" placeholder="${t("phone")}" maxlength="20" inputmode="tel"><textarea id="f_addr" rows="2" placeholder="${t("addr")}" maxlength="300"></textarea><input id="f_memo" placeholder="${t("memo")}" maxlength="200">
+  ${U?"":`<div class="mu">${t("hint")} <button class="lk" data-am="in">${t("login")}</button></div>`}<input id="f_name" placeholder="${t("name")}" maxlength="100" value="${esc(PR?.name)}"><input id="f_phone" placeholder="${t("phone")}" maxlength="20" inputmode="tel" value="${esc(PR?.phone)}"><textarea id="f_addr" rows="2" placeholder="${t("addr")}" maxlength="300">${esc(PR?.address)}</textarea><input id="f_memo" placeholder="${t("memo")}" maxlength="200">${U?`<label class="mu"><input type="checkbox" id="f_save" ${PR?.address?"":"checked"} style="width:auto"> ${t("saveaddr")}</label>`:""}
   <div class="err" id="err"></div><button class="big" id="place">${t("place")} · ${tk(sub()+fee())}</button>`:`<p class="mu">${t("empty")}</p>`);
   $("dr").classList.add("on");
 }
@@ -197,8 +203,10 @@ async function placeOrder(){
   const no="HG"+Date.now().toString(36).toUpperCase().slice(-6);
   const body={order_no:no,name,phone,address:addr,memo:memo||null,items:Object.values(S.cart).map(i=>({name_bn:i.bn||i.name,name:i.name,price:i.price,qty:i.q})),subtotal:sub(),delivery:fee(),total:sub()+fee(),status:"new",restaurant_id:S.cartRest,rider_id:null};
   try{
-    const r=await fetch(SB+"/rest/v1/orders",{method:"POST",headers:{...H,Prefer:"return=minimal"},body:JSON.stringify(body)});
-    if(!r.ok)throw 0;
+    if(sb){const{error}=await sb.from("orders").insert(body);if(error)throw 0}
+    else{const r=await fetch(SB+"/rest/v1/orders",{method:"POST",headers:{...H,Prefer:"return=minimal"},body:JSON.stringify(body)});if(!r.ok)throw 0}
+    try{if(U&&sb&&($("f_save")?.checked||!PR?.address)){await sb.from("profiles").upsert({id:U.id,name,phone,address:addr});await loadProfile()}}catch(x){}
+    S.MO=null;
     S.cart={};S.cartRest=null;save();S.tn=no;try{localStorage.setItem("lastOrder",no)}catch(x){}render();
     $("pn").innerHTML=`<div class="ok"><div class="e">✅</div><h2>${t("done")}</h2><p>${t("ono")}: <b>${no}</b></p><p class="mu">${t("cod")}</p><div id="tr"></div><button class="big" data-close style="margin-top:14px">OK</button></div>`;
     trackShow();
@@ -217,6 +225,80 @@ async function trackShow(){
   }catch(e){}
 }
 
+
+/* ---------- অ্যাকাউন্ট ---------- */
+const sb=window.supabase?supabase.createClient(SB,KEY):null;
+let U=null,PR=null;
+const accLbl=()=>U?"👤 "+((PR?.name||"").split(" ")[0]||t("acc")):"👤 "+t("login");
+async function loadProfile(){try{const{data}=await sb.from("profiles").select("*").eq("id",U.id).maybeSingle();PR=data||null}catch(e){}}
+async function initAuth(){
+  if(!sb)return;
+  const{data}=await sb.auth.getSession();U=data.session?.user||null;if(U)await loadProfile();render();
+  sb.auth.onAuthStateChange((_e,s)=>{U=s?.user||null;S.MO=null;if(!U)PR=null;setTimeout(async()=>{if(U)await loadProfile();render()},0)});
+}
+function openAuth(mode="in"){
+  const su=mode==="up";
+  $("pn").innerHTML=`<div class="row"><h2>${su?t("signup"):t("login")}</h2><button data-close class="pill" style="background:var(--ln);color:var(--tx)">✕</button></div>
+  ${su?`<input id="a_name" placeholder="${t("name")}" maxlength="100"><input id="a_phone" placeholder="${t("phone")}" maxlength="20" inputmode="tel">`:""}
+  <input id="a_mail" type="email" placeholder="${t("email")}"><input id="a_pw" type="password" placeholder="${t("pw")}">
+  <div class="err" id="aerr"></div><button class="big" id="a_go" data-mode="${mode}">${su?t("signup"):t("login")}</button>
+  <button class="lk" data-am="${su?"in":"up"}">${su?t("have"):t("nohave")}</button>`;
+  $("dr").classList.add("on");
+}
+async function doAuth(mode){
+  const e=$("a_mail").value.trim(),pw=$("a_pw").value,box=$("aerr"),b=$("a_go");
+  if(!/^\S+@\S+\.\S+$/.test(e)||pw.length<6){box.textContent=t("shortPw");return}
+  b.disabled=true;box.style.color="";
+  try{
+    if(mode==="up"){
+      const name=$("a_name").value.trim(),phone=$("a_phone").value.trim();
+      if(!name||!/^(\+?88)?01\d{9}$/.test(phone.replace(/[\s-]/g,""))){box.textContent=t("bad2");b.disabled=false;return}
+      const{data,error}=await sb.auth.signUp({email:e,password:pw,options:{data:{name,phone}}});
+      if(error)throw error;
+      if(!data.session){box.style.color="var(--ok)";box.textContent=t("confirmMail");b.disabled=false;return}
+      U=data.user;await sb.from("profiles").upsert({id:U.id,name,phone});await loadProfile();
+    }else{const{error}=await sb.auth.signInWithPassword({email:e,password:pw});if(error)throw error}
+    $("dr").classList.remove("on");S.tab="rest";render();
+  }catch(x){const m=x.message||"";box.textContent=/invalid login/i.test(m)?t("wrongPw"):/registered|exists/i.test(m)?t("exists"):/password/i.test(m)?t("shortPw"):m;b.disabled=false}
+}
+const ordersHtml=()=>!S.MO.length?`<p class="mu">${t("noorders")}</p>`:S.MO.map(o=>{
+  const i=SEQ.indexOf(o.status),lab=o.status==="cancelled"?t("cancelled"):T[L].s[Math.max(0,i)];
+  return `<div class="card info" style="margin-bottom:12px"><div class="row"><b>${esc(o.order_no)}</b><span class="tag">${lab}</span></div>
+  <div class="mu">${new Date(o.created_at).toLocaleString(L==="bn"?"bn-BD":"en-US")}</div>
+  <div style="margin:6px 0">${(o.items||[]).map(x=>esc(x.name_bn||x.name)+" × "+n(x.qty)).join(", ")}</div>
+  <div class="row"><b>${tk(o.total)}</b><span><button class="add" data-ro="${o.id}">${t("reorder")}</button> <button class="pill" data-tr="${esc(o.order_no)}" style="background:var(--ln);color:var(--tx)">${t("trackb")}</button></span></div></div>`}).join("");
+async function loadMyOrders(){
+  const{data}=await sb.from("orders").select("*").eq("user_id",U.id).order("created_at",{ascending:false}).limit(30);
+  S.MO=data||[];if(S.tab==="acc"&&$("mo"))$("mo").innerHTML=ordersHtml();
+}
+function accView(){
+  const v=$("view");
+  if(!U){v.innerHTML=`<div class="card info trk"><h2>👤 ${t("acc")}</h2><p class="mu">${t("hint")}</p><button class="big" data-am="in" style="margin-top:12px">${t("login")}</button></div>`;return}
+  const p=PR||{};
+  v.innerHTML=`<div class="card info trk"><h2>👤 ${t("acc")}</h2><div class="mu">${esc(U.email)}</div>
+  <div style="display:grid;gap:8px;margin-top:12px"><input id="p_name" class="fi" placeholder="${t("name")}" maxlength="100" value="${esc(p.name)}"><input id="p_phone" class="fi" placeholder="${t("phone")}" maxlength="20" inputmode="tel" value="${esc(p.phone)}"><textarea id="p_addr" class="fi" rows="2" placeholder="${t("addr")}" maxlength="300">${esc(p.address)}</textarea></div>
+  <div class="row" style="margin-top:12px"><button class="add" id="saveP">${t("saveP")}</button><button class="pill" id="logout" style="background:var(--ln);color:var(--tx)">${t("logout")}</button></div><div class="mu" id="pmsg" style="margin-top:6px"></div></div>
+  <h2 class="t" style="margin-top:18px">${t("myorders")}</h2><div id="mo">${S.MO?ordersHtml():"…"}</div>`;
+  if(!S.MO)loadMyOrders();
+}
+async function saveProfile(){
+  const{error}=await sb.from("profiles").upsert({id:U.id,name:$("p_name").value.trim()||null,phone:$("p_phone").value.trim()||null,address:$("p_addr").value.trim()||null});
+  $("pmsg").textContent=error?t("fail"):t("saved");if(!error){await loadProfile();$("acc").textContent=accLbl()}
+}
+function reorder(o){
+  const r=o.restaurant_id?S.R.find(x=>x.id===o.restaurant_id):null;
+  if(o.restaurant_id&&(!r||!r.is_open))return alert(t("closedR"));
+  S.cart={};S.cartRest=o.restaurant_id??null;let miss=0;
+  (o.items||[]).forEach(i=>{
+    const nmn=i.name_bn||i.name;let key=null;
+    if(r){const m=(r.menu_items||[]).find(x=>x.in_stock&&x.name_bn===nmn);if(m)key="m"+m.id}
+    else{const p=S.P.find(x=>x.in_stock&&x.name_bn+" ("+(x.unit_bn||"")+")"===nmn);if(p)key="p"+p.id}
+    const it=key&&find(key);if(it)S.cart[key]={...it,q:+i.qty||1};else miss++;
+  });
+  if(!Object.keys(S.cart).length){S.cartRest=null;return alert(t("miss"))}
+  save();render();openCart();if(miss)alert(t("miss"));
+}
+
 document.addEventListener("click",e=>{
   const g=s=>e.target.closest(s);let el;
   if(el=g("[data-t]")){S.tab=el.dataset.t;S.rid=null;if(S.tab==="trk"&&!S.tn)S.tn=localStorage.getItem("lastOrder")||"";render()}
@@ -229,11 +311,18 @@ document.addEventListener("click",e=>{
   else if(g("[data-close]")||e.target.id==="dr"){$("dr").classList.remove("on")}
   else if(g("#place")){placeOrder()}
   else if(g("#tgo")){S.tn=$("tn").value.trim().toUpperCase();trackShow()}
+  else if(el=g("[data-am]")){openAuth(el.dataset.am)}
+  else if(el=g("#a_go")){doAuth(el.dataset.mode)}
+  else if(g("#acc")){if(U){S.tab="acc";S.rid=null;render()}else openAuth("in")}
+  else if(el=g("[data-ro]")){const o=(S.MO||[]).find(x=>String(x.id)===el.dataset.ro);if(o)reorder(o)}
+  else if(el=g("[data-tr]")){S.tn=el.dataset.tr;S.tab="trk";S.rid=null;render()}
+  else if(g("#saveP")){saveProfile()}
+  else if(g("#logout")){sb.auth.signOut();S.tab="rest";S.rid=null}
   else if(g("#logo")){S.tab="rest";S.rid=null;render()}
   else if(g("#lang")){L=L==="bn"?"en":"bn";try{localStorage.setItem("lang",L)}catch(x){}render()}
 });
 $("q").addEventListener("input",e=>{S.q=e.target.value;render()});
-render();load();
+render();load();initAuth();
 </script>
 </body>
 </html>
