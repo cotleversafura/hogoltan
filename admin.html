@@ -25,6 +25,17 @@ const ST={new:"নতুন",confirmed:"কনফার্মড",preparing:"ত
 const CAT={veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম"};
 let tab="dash",F={st:"all",q:"",day:"all"},timer=null,maxId=null,openR=null;
 const $=id=>document.getElementById(id);
+/* ---------- ছবি আপলোড ---------- */
+const thumb=(u,e)=>u?`<img src="${esc(u)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;vertical-align:middle">`:esc(e||"");
+const imgBtn=(tb,id)=>`<label class="g" style="display:inline-block;cursor:pointer;border:1px solid #C5D2C8;border-radius:6px;padding:6px 9px;margin:2px;color:#17231D">📷<input type="file" accept="image/jpeg,image/png,image/webp" data-img="${tb}:${id}" hidden></label>`;
+async function upl(f,folder){const ext=(f.type.split("/")[1]||"jpg").replace("jpeg","jpg"),path=folder+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,7)+"."+ext;
+  const{error}=await sb.storage.from("images").upload(path,f,{contentType:f.type,cacheControl:"31536000"});if(error){alert(error.message);return null}
+  return sb.storage.from("images").getPublicUrl(path).data.publicUrl}
+function bindImg(){document.querySelectorAll("[data-img]").forEach(i=>i.onchange=async()=>{const[tb,id]=i.dataset.img.split(":"),f=i.files[0];if(!f)return;
+  if(f.size>3*1024*1024)return alert("ছবি ৩ MB-এর কম হতে হবে");
+  const u=await upl(f,tb);if(!u)return;if(fail((await sb.from(tb).update({image_url:u}).eq("id",id)).error))return;
+  ({restaurants:rest,menu_items:rest,products:prod})[tb]()})}
+
 const fail=e=>{if(e){alert(e.message);return true}};
 
 function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start();setTimeout(()=>{o.stop();a.close()},350)}catch(e){}}
@@ -110,14 +121,14 @@ async function rest(){
   const{data,error}=await sb.from("restaurants").select("*,menu_items(*)").order("id");
   if(error)return $("c").textContent="লোড করা যায়নি: "+error.message;
   $("c").innerHTML=`<div class="card"><b>নতুন রেস্তোরাঁ</b><br><input id="rn" placeholder="নাম (বাংলা)"><input id="rc" placeholder="খাবারের ধরন"><input id="ra" placeholder="এলাকা"><input id="rp" placeholder="ফোন" size="12"><input id="rf" type="number" min="0" placeholder="ডেলিভারি ফি" style="width:110px"><input id="rm" type="number" min="0" placeholder="ন্যূনতম অর্ডার" style="width:120px"><input id="rt" type="number" min="0" placeholder="মিনিট" style="width:80px"><button id="radd">যোগ করুন</button></div>`+
-  data.map(r=>`<div class="card"><div class="row"><b>${esc(r.name_bn)}</b><span>
+  data.map(r=>`<div class="card"><div class="row"><b>${thumb(r.image_url)} ${esc(r.name_bn)}</b><span>${imgBtn("restaurants",r.id)}
   <button data-open="${r.id}" data-v="${r.is_open}" class="${r.is_open?"":"g"}">${r.is_open?"🟢 খোলা":"⚪ বন্ধ"}</button>
   <button class="g" data-tg="${r.id}">${openR==r.id?"মেনু লুকান":"মেনু ("+bn((r.menu_items||[]).length)+")"}</button>
   <button class="x" data-rdel="${r.id}">মুছুন</button></span></div>
   <div class="m">ধরন <input data-rf="cuisine" data-id="${r.id}" value="${esc(r.cuisine)}" size="12"> এলাকা <input data-rf="area" data-id="${r.id}" value="${esc(r.area)}" size="10"> ফোন <input data-rf="phone" data-id="${r.id}" value="${esc(r.phone)}" size="12"><br>
   ডেলিভারি ৳<input data-rf="delivery_fee" data-id="${r.id}" type="number" value="${esc(r.delivery_fee)}" style="width:70px"> ন্যূনতম ৳<input data-rf="min_order" data-id="${r.id}" type="number" value="${esc(r.min_order)}" style="width:80px"> মিনিট <input data-rf="prep_time_min" data-id="${r.id}" type="number" value="${esc(r.prep_time_min)}" style="width:60px"></div>
   ${openR==r.id?`<div class="sub"><div class="card"><b>নতুন আইটেম</b><br><input id="mn" placeholder="নাম"><input id="md" placeholder="বিবরণ"><input id="mp" type="number" min="0" placeholder="দাম ৳" style="width:90px"><input id="me" placeholder="🍛" size="3"><button data-madd="${r.id}">যোগ করুন</button></div>
-  ${(r.menu_items||[]).sort((a,b)=>a.id-b.id).map(m=>`<div class="row" style="padding:6px 0;border-bottom:1px solid #eee"><span>${esc(m.emoji)} <b>${esc(m.name_bn)}</b> <small>${esc(m.description_bn)}</small></span><span>৳<input type="number" value="${esc(m.price)}" data-mp="${m.id}" style="width:80px"><button data-ms="${m.id}" data-v="${m.in_stock}" class="${m.in_stock?"":"g"}">${m.in_stock?"আছে":"নেই"}</button><button class="x" data-md="${m.id}">মুছুন</button></span></div>`).join("")||"<p class='m'>কোনো আইটেম নেই।</p>"}</div>`:""}</div>`).join("");
+  ${(r.menu_items||[]).sort((a,b)=>a.id-b.id).map(m=>`<div class="row" style="padding:6px 0;border-bottom:1px solid #eee"><span>${thumb(m.image_url,m.emoji)} <b>${esc(m.name_bn)}</b> <small>${esc(m.description_bn)}</small></span><span>${imgBtn("menu_items",m.id)}৳<input type="number" value="${esc(m.price)}" data-mp="${m.id}" style="width:80px"><button data-ms="${m.id}" data-v="${m.in_stock}" class="${m.in_stock?"":"g"}">${m.in_stock?"আছে":"নেই"}</button><button class="x" data-md="${m.id}">মুছুন</button></span></div>`).join("")||"<p class='m'>কোনো আইটেম নেই।</p>"}</div>`:""}</div>`).join("");
   $("radd").onclick=async()=>{if(!$("rn").value)return alert("নাম দিন");if(!fail((await sb.from("restaurants").insert({name_bn:$("rn").value,cuisine:$("rc").value||null,area:$("ra").value||null,phone:$("rp").value||null,delivery_fee:+$("rf").value||0,min_order:+$("rm").value||0,prep_time_min:+$("rt").value||null})).error))rest()};
   document.querySelectorAll("[data-open]").forEach(b=>b.onclick=async()=>{if(!fail((await sb.from("restaurants").update({is_open:b.dataset.v!="true"}).eq("id",b.dataset.open)).error))rest()});
   document.querySelectorAll("[data-tg]").forEach(b=>b.onclick=()=>{openR=openR==+b.dataset.tg?null:+b.dataset.tg;rest()});
@@ -127,6 +138,7 @@ async function rest(){
   document.querySelectorAll("[data-mp]").forEach(i=>i.onchange=async()=>{fail((await sb.from("menu_items").update({price:+i.value}).eq("id",i.dataset.mp)).error)});
   document.querySelectorAll("[data-ms]").forEach(b=>b.onclick=async()=>{if(!fail((await sb.from("menu_items").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.ms)).error))rest()});
   document.querySelectorAll("[data-md]").forEach(b=>b.onclick=async()=>{if(confirm("আইটেমটি মুছবেন?")&&!fail((await sb.from("menu_items").delete().eq("id",b.dataset.md)).error))rest()});
+  bindImg();
 }
 
 /* ---------- মুদি পণ্য ---------- */
@@ -138,12 +150,13 @@ async function prod(){
   $("c").innerHTML=`<div class="card"><b>নতুন পণ্য</b><br><input id="nb" placeholder="নাম (বাংলা)"><input id="ne" placeholder="Name (English)"><input id="ub" placeholder="একক (১ কেজি)" size="10"><input id="ue" placeholder="Unit (1 kg)" size="10"><input id="pr" type="number" min="0" placeholder="দাম ৳" style="width:90px"><input id="em" placeholder="🍅" size="3"><select id="ca">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select><button id="add">যোগ করুন</button></div>
   <div class="tabs" style="margin-top:8px"><button data-pc="all" class="${cf=="all"?"on":""}">সব (${bn(data.length)})</button>${Object.entries(CAT).map(([k,v])=>`<button data-pc="${k}" class="${cf==k?"on":""}">${v}</button>`).join("")}</div>
   ${dup.size?`<p class="m">⚠️ ${bn(dup.size)}টি সম্ভাব্য ডুপ্লিকেট পণ্য আছে (নামের পাশে চিহ্ন দেওয়া)।</p>`:""}`+
-  list.map(p=>`<div class="card row"><span>${esc(p.emoji)} <b>${esc(p.name_bn)}</b> <small>${esc(p.unit_bn)} · ${CAT[p.category]||""}</small>${dup.has(p.id)?' <span class="tag" style="background:#FDECC8">ডুপ্লিকেট?</span>':""}</span><span>৳<input type="number" value="${esc(p.price)}" data-p="${p.id}" style="width:80px"> <button data-s="${p.id}" data-v="${p.in_stock}" class="${p.in_stock?"":"g"}">${p.in_stock?"স্টকে আছে":"স্টক নেই"}</button> <button class="x" data-d="${p.id}">মুছুন</button></span></div>`).join("");
+  list.map(p=>`<div class="card row"><span>${thumb(p.image_url,p.emoji)} <b>${esc(p.name_bn)}</b> <small>${esc(p.unit_bn)} · ${CAT[p.category]||""}</small>${dup.has(p.id)?' <span class="tag" style="background:#FDECC8">ডুপ্লিকেট?</span>':""}</span><span>${imgBtn("products",p.id)}৳<input type="number" value="${esc(p.price)}" data-p="${p.id}" style="width:80px"> <button data-s="${p.id}" data-v="${p.in_stock}" class="${p.in_stock?"":"g"}">${p.in_stock?"স্টকে আছে":"স্টক নেই"}</button> <button class="x" data-d="${p.id}">মুছুন</button></span></div>`).join("");
   $("add").onclick=async()=>{if(!$("nb").value||!$("pr").value)return alert("নাম ও দাম দিন");if(!fail((await sb.from("products").insert({name_bn:$("nb").value,name_en:$("ne").value||null,unit_bn:$("ub").value,unit_en:$("ue").value,price:+$("pr").value,emoji:$("em").value||"🛒",category:$("ca").value})).error))prod()};
   document.querySelectorAll("[data-pc]").forEach(b=>b.onclick=()=>{window._pc=b.dataset.pc;prod()});
   document.querySelectorAll("[data-p]").forEach(i=>i.onchange=async()=>{fail((await sb.from("products").update({price:+i.value}).eq("id",i.dataset.p)).error)});
   document.querySelectorAll("[data-s]").forEach(b=>b.onclick=async()=>{await sb.from("products").update({in_stock:b.dataset.v!="true"}).eq("id",b.dataset.s);prod()});
   document.querySelectorAll("[data-d]").forEach(b=>b.onclick=async()=>{if(confirm("মুছে ফেলবেন?")){await sb.from("products").delete().eq("id",b.dataset.d);prod()}});
+  bindImg();
 }
 
 /* ---------- রাইডার ---------- */
