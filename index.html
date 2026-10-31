@@ -49,6 +49,10 @@ h2.t{font-size:20px;margin:6px 0 12px}
 .item .i{flex:1;min-width:0}
 .th{width:84px;height:84px;border-radius:12px;background:linear-gradient(135deg,#ffe3ef,#fff1c9);display:flex;align-items:center;justify-content:center;font-size:40px;overflow:hidden;flex:none}
 .th img{width:100%;height:100%;object-fit:cover}
+.th,.cv{position:relative}
+.ov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.th svg{width:76%;height:76%}.cv svg{width:56%;height:90%}
+.bd,.fee{z-index:1}
 .pr{font-weight:700;margin-top:4px}
 .add{background:var(--p);color:#fff;border-radius:10px;padding:7px 16px;font-weight:600}
 .add:disabled{background:#999}
@@ -83,7 +87,7 @@ footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
 </head>
 <body>
 <header><div class="bar">
-  <span class="logo" id="logo">🛵 হগলতান</span><span class="sp"></span>
+  <span class="logo" id="logo">হগলতান</span><span class="sp"></span>
   <button class="pill" id="acc"></button>
   <button class="pill" id="lang"></button>
   <button class="cartbtn" id="cartbtn"></button>
@@ -93,7 +97,7 @@ footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
   <div class="chips" id="chips"></div>
 </div></section>
 <main>
-  <div class="search"><span>🔍</span><input id="q"></div>
+  <div class="search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--mu)"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q"></div>
   <div class="tabs" id="tabs"></div>
   <div id="view"></div>
 </main>
@@ -106,8 +110,8 @@ footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
 const SB="https://zphbqwkvsacptggytbmr.supabase.co",KEY="sb_publishable_i6_Cye57ryc5jSzHdmem-A_7WDig9Zd";
 const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
 const T={
-bn:{login:"লগইন",signup:"অ্যাকাউন্ট খুলুন",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",have:"অ্যাকাউন্ট আছে? লগইন করুন",nohave:"নতুন? অ্যাকাউন্ট খুলুন",acc:"আমার অ্যাকাউন্ট",saveP:"সংরক্ষণ করুন",saved:"সংরক্ষিত হয়েছে",logout:"লগআউট",myorders:"আমার অর্ডার",noorders:"এখনো কোনো অর্ডার নেই",reorder:"আবার অর্ডার",trackb:"ট্র্যাক",miss:"কিছু আইটেম এখন পাওয়া যাচ্ছে না, বাদ দেওয়া হয়েছে",closedR:"রেস্তোরাঁটি এখন বন্ধ",saveaddr:"ঠিকানা ও তথ্য সংরক্ষণ করুন",hint:"লগইন করলে ঠিকানা সংরক্ষিত থাকবে, আগের অর্ডার দেখা ও আবার অর্ডার করা যাবে",shortPw:"সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন",bad2:"নাম ও সঠিক ফোন নম্বর দিন",confirmMail:"আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। লিংকে চাপুন, তারপর লগইন করুন।",wrongPw:"ইমেইল বা পাসওয়ার্ড ভুল",exists:"এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন",h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:"💵 ক্যাশ অন ডেলিভারি",c2:"🍽️ রেস্তোরাঁর খাবার",c3:"🥬 তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:"🍽️ রেস্তোরাঁ",groc:"🥬 মুদি বাজার",trk:"📦 অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
-en:{login:"Log in",signup:"Create account",email:"Email",pw:"Password (min 6 characters)",have:"Have an account? Log in",nohave:"New here? Create account",acc:"My account",saveP:"Save",saved:"Saved",logout:"Log out",myorders:"My orders",noorders:"No orders yet",reorder:"Reorder",trackb:"Track",miss:"Some items are unavailable and were skipped",closedR:"This restaurant is closed now",saveaddr:"Save my address & details",hint:"Log in to save your address, see past orders and reorder",shortPw:"Enter a valid email and a password of 6+ characters",bad2:"Enter your name and a valid phone",confirmMail:"A confirmation link was sent to your email. Tap it, then log in.",wrongPw:"Wrong email or password",exists:"An account with this email exists, please log in",h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:"💵 Cash on delivery",c2:"🍽️ Restaurant food",c3:"🥬 Fresh grocery",ph:"Search restaurants, dishes or items…",rest:"🍽️ Restaurants",groc:"🥬 Grocery",trk:"📦 Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
+bn:{login:"লগইন",signup:"অ্যাকাউন্ট খুলুন",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",have:"অ্যাকাউন্ট আছে? লগইন করুন",nohave:"নতুন? অ্যাকাউন্ট খুলুন",acc:"আমার অ্যাকাউন্ট",saveP:"সংরক্ষণ করুন",saved:"সংরক্ষিত হয়েছে",logout:"লগআউট",myorders:"আমার অর্ডার",noorders:"এখনো কোনো অর্ডার নেই",reorder:"আবার অর্ডার",trackb:"ট্র্যাক",miss:"কিছু আইটেম এখন পাওয়া যাচ্ছে না, বাদ দেওয়া হয়েছে",closedR:"রেস্তোরাঁটি এখন বন্ধ",saveaddr:"ঠিকানা ও তথ্য সংরক্ষণ করুন",hint:"লগইন করলে ঠিকানা সংরক্ষিত থাকবে, আগের অর্ডার দেখা ও আবার অর্ডার করা যাবে",shortPw:"সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন",bad2:"নাম ও সঠিক ফোন নম্বর দিন",confirmMail:"আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। লিংকে চাপুন, তারপর লগইন করুন।",wrongPw:"ইমেইল বা পাসওয়ার্ড ভুল",exists:"এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন",h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:" ক্যাশ অন ডেলিভারি",c2:" রেস্তোরাঁর খাবার",c3:" তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:" রেস্তোরাঁ",groc:" মুদি বাজার",trk:" অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
+en:{login:"Log in",signup:"Create account",email:"Email",pw:"Password (min 6 characters)",have:"Have an account? Log in",nohave:"New here? Create account",acc:"My account",saveP:"Save",saved:"Saved",logout:"Log out",myorders:"My orders",noorders:"No orders yet",reorder:"Reorder",trackb:"Track",miss:"Some items are unavailable and were skipped",closedR:"This restaurant is closed now",saveaddr:"Save my address & details",hint:"Log in to save your address, see past orders and reorder",shortPw:"Enter a valid email and a password of 6+ characters",bad2:"Enter your name and a valid phone",confirmMail:"A confirmation link was sent to your email. Tap it, then log in.",wrongPw:"Wrong email or password",exists:"An account with this email exists, please log in",h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:" Cash on delivery",c2:" Restaurant food",c3:" Fresh grocery",ph:"Search restaurants, dishes or items…",rest:" Restaurants",groc:" Grocery",trk:" Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
 const GROC_FEE=40,SEQ=["new","confirmed","preparing","on_the_way","delivered"];
 let L=localStorage.getItem("lang")||"bn",t=k=>T[L][k];
 let S={tab:"rest",cat:"all",rid:null,q:"",R:[],P:[],cart:{},cartRest:null,loading:true,tn:""};
@@ -117,9 +121,9 @@ const n=x=>Number(x).toLocaleString(L==="bn"?"bn-BD":"en-US"),tk=x=>"৳"+n(x);
 const nm=(o,k="name")=>L==="en"&&o[k+"_en"]?o[k+"_en"]:o[k+"_bn"];
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const save=()=>{try{localStorage.setItem("cart",JSON.stringify({cart:S.cart,cartRest:S.cartRest}))}catch(e){}};
-const em=e=>e==="🫘"?"🍲":(e||"🛒");
-const cuEm=r=>{const c=r.cuisine||"";return c.includes("বিরিয়ানি")?"🍛":c.includes("বাঙালি")?"🍚":c.includes("ফাস্ট")?"🍔":"🍽️"};
-const img=(u,e)=>u?`<img loading="lazy" src="${esc(u)}" alt="" onerror="this.replaceWith(document.createTextNode('${e}'))">`:e;
+const ART={"টমেটো": "<circle cx=\"50\" cy=\"57\" r=\"32\" fill=\"#e53935\"/><path d=\"M50 22l-11 9 8-1 3 7 3-7 8 1z\" fill=\"#43a047\"/><circle cx=\"38\" cy=\"47\" r=\"6\" fill=\"#fff\" opacity=\".3\"/>", "আলু": "<ellipse cx=\"50\" cy=\"58\" rx=\"37\" ry=\"27\" fill=\"#c9a06b\"/><circle cx=\"36\" cy=\"52\" r=\"2.5\" fill=\"#9a7447\"/><circle cx=\"58\" cy=\"64\" r=\"2.5\" fill=\"#9a7447\"/><circle cx=\"66\" cy=\"50\" r=\"2\" fill=\"#9a7447\"/><circle cx=\"44\" cy=\"68\" r=\"2\" fill=\"#9a7447\"/>", "পেঁয়াজ": "<path d=\"M50 14q-7 15 0 24q7-9 0-24z\" fill=\"#c98a2b\"/><ellipse cx=\"50\" cy=\"60\" rx=\"31\" ry=\"28\" fill=\"#e0a83f\"/><path d=\"M50 36q-14 24 0 52M50 36q14 24 0 52\" stroke=\"#c98a2b\" stroke-width=\"2\" fill=\"none\"/>", "পালং শাক": "<path d=\"M50 88C20 64 24 28 50 14c26 14 30 50 0 74z\" fill=\"#2e8b3d\"/><path d=\"M50 86V26M50 56l-14-14M50 66l14-14\" stroke=\"#a5d6a7\" stroke-width=\"2.5\" fill=\"none\"/>", "কলা": "<path d=\"M24 28Q26 86 82 76Q88 70 80 66Q46 70 38 26z\" fill=\"#fbd935\" stroke=\"#c9a400\" stroke-width=\"2\"/><path d=\"M24 28l6-6 10 4z\" fill=\"#8d6e3f\"/>", "আপেল": "<path d=\"M50 30C30 22 16 40 22 62c6 20 22 24 28 20 6 4 22 0 28-20 6-22-8-40-28-32z\" fill=\"#d32f2f\"/><path d=\"M50 30q0-10 6-16\" stroke=\"#6d4c41\" stroke-width=\"4\" fill=\"none\"/><path d=\"M54 22q12-8 20 0q-10 8-20 0z\" fill=\"#43a047\"/><circle cx=\"36\" cy=\"46\" r=\"5\" fill=\"#fff\" opacity=\".3\"/>", "আম": "<ellipse cx=\"50\" cy=\"58\" rx=\"27\" ry=\"34\" transform=\"rotate(-25 50 58)\" fill=\"#ffa726\"/><ellipse cx=\"62\" cy=\"70\" rx=\"14\" ry=\"20\" transform=\"rotate(-25 62 70)\" fill=\"#ef5350\" opacity=\".45\"/><path d=\"M52 24q12-10 22-4q-8 10-22 4z\" fill=\"#43a047\"/>", "লেবু": "<ellipse cx=\"50\" cy=\"56\" rx=\"36\" ry=\"25\" fill=\"#fdd835\"/><circle cx=\"14\" cy=\"56\" r=\"4\" fill=\"#fdd835\"/><circle cx=\"86\" cy=\"56\" r=\"4\" fill=\"#fdd835\"/><ellipse cx=\"40\" cy=\"48\" rx=\"9\" ry=\"5\" fill=\"#fff\" opacity=\".35\"/>", "মিনিকেট চাল": "<ellipse cx=\"50\" cy=\"50\" rx=\"32\" ry=\"16\" fill=\"#fff\"/><path d=\"M16 52h68a34 34 0 0 1-68 0z\" fill=\"#d84315\"/><path d=\"M34 40l4 3M50 36l3 4M62 42l4 2M44 46l4 2\" stroke=\"#cfd8dc\" stroke-width=\"2\"/>", "মসুর ডাল": "<ellipse cx=\"50\" cy=\"50\" rx=\"32\" ry=\"15\" fill=\"#ef6c00\"/><path d=\"M16 52h68a34 34 0 0 1-68 0z\" fill=\"#6d4c41\"/><circle cx=\"38\" cy=\"48\" r=\"3\" fill=\"#ffb74d\"/><circle cx=\"52\" cy=\"44\" r=\"3\" fill=\"#ffb74d\"/><circle cx=\"62\" cy=\"50\" r=\"3\" fill=\"#ffb74d\"/><circle cx=\"46\" cy=\"54\" r=\"3\" fill=\"#ffb74d\"/>", "সয়াবিন তেল": "<rect x=\"40\" y=\"10\" width=\"20\" height=\"10\" rx=\"2\" fill=\"#c62828\"/><path d=\"M42 20h16l12 14v50a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V34z\" fill=\"#fbc02d\"/><rect x=\"34\" y=\"46\" width=\"32\" height=\"26\" rx=\"3\" fill=\"#fff\"/><path d=\"M40 56h20M40 64h14\" stroke=\"#c62828\" stroke-width=\"3\"/>", "লবণ": "<rect x=\"32\" y=\"14\" width=\"36\" height=\"16\" rx=\"5\" fill=\"#90a4ae\"/><path d=\"M32 30h36l4 52a6 6 0 0 1-6 6H34a6 6 0 0 1-6-6z\" fill=\"#fff\" stroke=\"#b0bec5\" stroke-width=\"3\"/><circle cx=\"42\" cy=\"21\" r=\"1.6\" fill=\"#546e7a\"/><circle cx=\"50\" cy=\"21\" r=\"1.6\" fill=\"#546e7a\"/><circle cx=\"58\" cy=\"21\" r=\"1.6\" fill=\"#546e7a\"/>", "ডিম": "<ellipse cx=\"38\" cy=\"58\" rx=\"22\" ry=\"29\" fill=\"#fff8e1\" stroke=\"#e0c9a6\" stroke-width=\"2\"/><ellipse cx=\"64\" cy=\"62\" rx=\"20\" ry=\"26\" fill=\"#d7a86e\"/><ellipse cx=\"58\" cy=\"52\" rx=\"4\" ry=\"7\" fill=\"#fff\" opacity=\".35\"/>", "তরল দুধ": "<path d=\"M28 18h44l-5 66a6 6 0 0 1-6 5H39a6 6 0 0 1-6-5z\" fill=\"#e3f2fd\" stroke=\"#90caf9\" stroke-width=\"3\"/><path d=\"M31 40h38l-3 44a5 5 0 0 1-5 4H39a5 5 0 0 1-5-4z\" fill=\"#fff\"/>", "মাখন": "<path d=\"M14 46l14-14h58l-14 14z\" fill=\"#fff59d\"/><rect x=\"14\" y=\"46\" width=\"58\" height=\"30\" rx=\"3\" fill=\"#fdd835\"/><path d=\"M72 46l14-14v30l-14 14z\" fill=\"#f9a825\"/>", "পাউরুটি": "<path d=\"M20 48a30 22 0 0 1 60 0v32a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4z\" fill=\"#e0a458\"/><path d=\"M26 50a24 16 0 0 1 48 0v28H26z\" fill=\"#f6dcae\"/>", "বেগুন": "<path d=\"M62 18q18 4 12 28Q66 80 34 84Q14 82 22 64Q40 46 56 30z\" fill=\"#6a1b9a\"/><path d=\"M58 16q8-4 14 2l-8 8z\" fill=\"#43a047\"/><ellipse cx=\"38\" cy=\"70\" rx=\"5\" ry=\"3\" fill=\"#fff\" opacity=\".25\" transform=\"rotate(-30 38 70)\"/>", "শসা": "<g transform=\"rotate(-18 50 51)\"><rect x=\"12\" y=\"38\" width=\"76\" height=\"26\" rx=\"13\" fill=\"#43a047\"/><path d=\"M24 58l6-2M40 50l5-2M58 44l5-2M72 38l5-2\" stroke=\"#a5d6a7\" stroke-width=\"2.5\"/></g>", "গাজর": "<path d=\"M36 26Q50 18 64 26L52 90Q50 92 48 90z\" fill=\"#fb8c00\"/><path d=\"M46 20l-6-12M52 20l2-14M58 22l8-10\" stroke=\"#43a047\" stroke-width=\"5\" stroke-linecap=\"round\"/><path d=\"M42 40h10M44 54h8M47 68h5\" stroke=\"#e65100\" stroke-width=\"2\"/>", "কমলা": "<circle cx=\"50\" cy=\"56\" r=\"33\" fill=\"#fb8c00\"/><path d=\"M50 24q10-8 18-2q-8 8-18 2z\" fill=\"#43a047\"/><circle cx=\"38\" cy=\"46\" r=\"6\" fill=\"#fff\" opacity=\".28\"/>", "পেয়ারা": "<ellipse cx=\"50\" cy=\"56\" rx=\"31\" ry=\"30\" fill=\"#aed581\"/><ellipse cx=\"50\" cy=\"56\" rx=\"22\" ry=\"21\" fill=\"#f8bbd0\" opacity=\".55\"/><path d=\"M50 26q8-8 16-4q-6 8-16 4z\" fill=\"#558b2f\"/>", "মিষ্টি দই": "<path d=\"M24 36h52l-6 46a6 6 0 0 1-6 5H36a6 6 0 0 1-6-5z\" fill=\"#fff\" stroke=\"#ce93d8\" stroke-width=\"3\"/><rect x=\"20\" y=\"28\" width=\"60\" height=\"10\" rx=\"4\" fill=\"#ab47bc\"/><path d=\"M36 56h28\" stroke=\"#ce93d8\" stroke-width=\"4\"/>"};
+const fb=name=>{const a=ART[name]||`<rect x="10" y="10" width="80" height="80" rx="18" fill="#f3b3cf"/><text x="50" y="66" text-anchor="middle" font-size="46" font-weight="700" fill="#d70f64" font-family="inherit">${esc(Array.from(name||"?")[0])}</text>`;return `<svg viewBox="0 0 100 100" aria-hidden="true">${a}</svg>`};
+const img=(u,name)=>fb(name)+(u?`<img class="ov" loading="lazy" src="${esc(u)}" alt="" onerror="this.remove()">`:"");
 
 async function load(){
   try{
@@ -143,9 +147,9 @@ function render(){
   $("chips").innerHTML=["c1","c2","c3"].map(k=>`<span>${t(k)}</span>`).join("");
   $("tabs").innerHTML=["rest","groc","trk"].map(k=>`<button class="tab ${S.tab===k&&!S.rid?"on":""}" data-t="${k}">${t(k)}</button>`).join("");
   const cnt=Object.values(S.cart).reduce((a,b)=>a+b.q,0);
-  $("cartbtn").textContent="🛒 "+t("cart")+" ("+n(cnt)+")";
+  $("cartbtn").textContent=t("cart")+" ("+n(cnt)+")";
   const f=$("fab");f.classList.toggle("on",cnt>0);
-  if(cnt)f.innerHTML=`<span>🛒 ${t("view")} · ${n(cnt)}</span><span>${tk(sub())}</span>`;
+  if(cnt)f.innerHTML=`<span> ${t("view")} · ${n(cnt)}</span><span>${tk(sub())}</span>`;
   const v=$("view"),q=S.q.toLowerCase();
   if(S.loading){v.innerHTML=`<div class="grid">${"<div class='sk'></div>".repeat(6)}</div>`;return}
   if(S.tab==="acc"&&!S.rid){accView();return}
@@ -154,25 +158,25 @@ function render(){
   if(S.rid){
     const r=S.R.find(x=>x.id===S.rid);if(!r){S.rid=null;return render()}
     v.innerHTML=`<button class="back" data-back>${t("back")}</button>
-    <div class="card rh"><div class="cv">${img(r.image_url,cuEm(r))}<span class="bd ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div>
-    <div class="info"><h2>${esc(nm(r,"name"))}</h2><div class="mu">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="mu">⏱ ${n(r.prep_time_min||0)} ${t("mn")} · ${t("fee")} ${tk(r.delivery_fee)} · ${t("min")} ${tk(r.min_order)}</div></div></div>
+    <div class="card rh"><div class="cv">${img(r.image_url,r.name_bn)}<span class="bd ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span></div>
+    <div class="info"><h2>${esc(nm(r,"name"))}</h2><div class="mu">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="mu"> ${n(r.prep_time_min||0)} ${t("mn")} · ${t("fee")} ${tk(r.delivery_fee)} · ${t("min")} ${tk(r.min_order)}</div></div></div>
     <h2 class="t" style="margin-top:18px">${t("pop")}</h2>
-    <div class="card">${(r.menu_items||[]).filter(m=>m.in_stock&&(!q||m.name_bn.toLowerCase().includes(q))).sort((a,b)=>a.id-b.id).map(m=>`<div class="item"><div class="i"><b>${esc(nm(m))}</b><div class="mu">${esc(m.description_bn||"")}</div><div class="pr">${tk(m.price)}</div></div><div class="th">${img(m.image_url,em(m.emoji))}</div>${ctl("m"+m.id,!r.is_open)}</div>`).join("")||`<p class="info mu">${t("none")}</p>`}</div>`;
+    <div class="card">${(r.menu_items||[]).filter(m=>m.in_stock&&(!q||m.name_bn.toLowerCase().includes(q))).sort((a,b)=>a.id-b.id).map(m=>`<div class="item"><div class="i"><b>${esc(nm(m))}</b><div class="mu">${esc(m.description_bn||"")}</div><div class="pr">${tk(m.price)}</div></div><div class="th">${img(m.image_url,m.name_bn)}</div>${ctl("m"+m.id,!r.is_open)}</div>`).join("")||`<p class="info mu">${t("none")}</p>`}</div>`;
     return}
   if(S.tab==="rest"){
     const list=S.R.filter(r=>!q||(r.name_bn+" "+(r.cuisine||"")+" "+(r.area||"")+" "+(r.menu_items||[]).map(m=>m.name_bn).join(" ")).toLowerCase().includes(q));
-    v.innerHTML=list.length?`<div class="grid">${list.map(r=>`<div class="card rc ${r.is_open?"":"closed"}" data-r="${r.id}"><div class="cv">${img(r.image_url,cuEm(r))}<span class="bd ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span><span class="fee">${t("fee")} ${tk(r.delivery_fee)}</span></div><div class="rb"><h3>${esc(nm(r,"name"))}</h3><div class="mu">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="mu">⏱ ${n(r.prep_time_min||0)} ${t("mn")} · ${t("min")} ${tk(r.min_order)}</div></div></div>`).join("")}</div>`:`<p class="mu">${t("none")}</p>`;
+    v.innerHTML=list.length?`<div class="grid">${list.map(r=>`<div class="card rc ${r.is_open?"":"closed"}" data-r="${r.id}"><div class="cv">${img(r.image_url,r.name_bn)}<span class="bd ${r.is_open?"":"x"}">${r.is_open?t("open"):t("closed")}</span><span class="fee">${t("fee")} ${tk(r.delivery_fee)}</span></div><div class="rb"><h3>${esc(nm(r,"name"))}</h3><div class="mu">${esc(r.cuisine||"")} · ${esc(r.area||"")}</div><div class="mu"> ${n(r.prep_time_min||0)} ${t("mn")} · ${t("min")} ${tk(r.min_order)}</div></div></div>`).join("")}</div>`:`<p class="mu">${t("none")}</p>`;
   }else{
     const cats=["all","veg","fruit","stap","dairy"];
     const list=S.P.filter(p=>p.in_stock&&(S.cat==="all"||p.category===S.cat)&&(!q||(p.name_bn+" "+(p.name_en||"")).toLowerCase().includes(q)));
     v.innerHTML=`<div class="tabs">${cats.map(c=>`<button class="tab ${S.cat===c?"on":""}" data-c="${c}">${t(c)}</button>`).join("")}</div>
-    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${list.map(p=>`<div class="card gc"><div class="th">${img(p.image_url,em(p.emoji))}</div><b>${esc(nm(p))}</b><div class="mu">${esc(p.unit_bn||"")}</div><div class="row" style="margin-top:8px"><b>${tk(p.price)}</b>${ctl("p"+p.id)}</div></div>`).join("")}</div>${list.length?"":`<p class="mu">${t("none")}</p>`}`;
+    <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${list.map(p=>`<div class="card gc"><div class="th">${img(p.image_url,p.name_bn)}</div><b>${esc(nm(p))}</b><div class="mu">${esc(p.unit_bn||"")}</div><div class="row" style="margin-top:8px"><b>${tk(p.price)}</b>${ctl("p"+p.id)}</div></div>`).join("")}</div>${list.length?"":`<p class="mu">${t("none")}</p>`}`;
   }
 }
 
 function find(key){
-  if(key[0]==="m"){for(const r of S.R){const m=(r.menu_items||[]).find(x=>"m"+x.id===key);if(m)return{key,name:nm(m),bn:m.name_bn,price:+m.price,e:em(m.emoji),rest:r.id}}}
-  else{const p=S.P.find(x=>"p"+x.id===key);if(p)return{key,name:nm(p)+" ("+(p.unit_bn||"")+")",bn:p.name_bn+" ("+(p.unit_bn||"")+")",price:+p.price,e:em(p.emoji),rest:null}}
+  if(key[0]==="m"){for(const r of S.R){const m=(r.menu_items||[]).find(x=>"m"+x.id===key);if(m)return{key,name:nm(m),bn:m.name_bn,price:+m.price,rest:r.id}}}
+  else{const p=S.P.find(x=>"p"+x.id===key);if(p)return{key,name:nm(p)+" ("+(p.unit_bn||"")+")",bn:p.name_bn+" ("+(p.unit_bn||"")+")",price:+p.price,rest:null}}
 }
 function addItem(key){
   const it=find(key);if(!it)return;
@@ -186,8 +190,8 @@ const minOrder=()=>{const r=S.R.find(x=>x.id===S.cartRest);return r?+r.min_order
 
 function openCart(){
   const items=Object.values(S.cart);
-  $("pn").innerHTML=`<div class="row"><h2>🛒 ${t("cart")}</h2><button data-close class="pill" style="background:var(--ln);color:var(--tx)">✕</button></div>`+
-  (items.length?`${items.map(i=>`<div class="row"><span>${i.e} ${esc(i.name)}<div class="mu">${tk(i.price)}</div></span><span class="st"><button data-q="${i.key}" data-d="-1">−</button>${n(i.q)}<button data-q="${i.key}" data-d="1">+</button></span></div>`).join("")}
+  $("pn").innerHTML=`<div class="row"><h2> ${t("cart")}</h2><button data-close class="pill" style="background:var(--ln);color:var(--tx)">✕</button></div>`+
+  (items.length?`${items.map(i=>`<div class="row"><span>${esc(i.name)}<div class="mu">${tk(i.price)}</div></span><span class="st"><button data-q="${i.key}" data-d="-1">−</button>${n(i.q)}<button data-q="${i.key}" data-d="1">+</button></span></div>`).join("")}
   <hr style="border:0;border-top:1px solid var(--ln)">
   <div class="row"><span>${t("sub_t")}</span><b>${tk(sub())}</b></div><div class="row"><span>${t("del")}</span><b>${tk(fee())}</b></div><div class="row"><span>${t("tot")}</span><b>${tk(sub()+fee())}</b></div>
   ${U?"":`<div class="mu">${t("hint")} <button class="lk" data-am="in">${t("login")}</button></div>`}<input id="f_name" placeholder="${t("name")}" maxlength="100" value="${esc(PR?.name)}"><input id="f_phone" placeholder="${t("phone")}" maxlength="20" inputmode="tel" value="${esc(PR?.phone)}"><textarea id="f_addr" rows="2" placeholder="${t("addr")}" maxlength="300">${esc(PR?.address)}</textarea><input id="f_memo" placeholder="${t("memo")}" maxlength="200">${U?`<label class="mu"><input type="checkbox" id="f_save" ${PR?.address?"":"checked"} style="width:auto"> ${t("saveaddr")}</label>`:""}
@@ -208,7 +212,7 @@ async function placeOrder(){
     try{if(U&&sb&&($("f_save")?.checked||!PR?.address)){await sb.from("profiles").upsert({id:U.id,name,phone,address:addr});await loadProfile()}}catch(x){}
     S.MO=null;
     S.cart={};S.cartRest=null;save();S.tn=no;try{localStorage.setItem("lastOrder",no)}catch(x){}render();
-    $("pn").innerHTML=`<div class="ok"><div class="e">✅</div><h2>${t("done")}</h2><p>${t("ono")}: <b>${no}</b></p><p class="mu">${t("cod")}</p><div id="tr"></div><button class="big" data-close style="margin-top:14px">OK</button></div>`;
+    $("pn").innerHTML=`<div class="ok"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#2e9d4f" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M7 12.5l3.2 3.2L17 9"/></svg><h2>${t("done")}</h2><p>${t("ono")}: <b>${no}</b></p><p class="mu">${t("cod")}</p><div id="tr"></div><button class="big" data-close style="margin-top:14px">OK</button></div>`;
     trackShow();
   }catch(x){b.disabled=false;b.textContent=t("place");e.textContent=t("fail")}
 }
@@ -229,7 +233,7 @@ async function trackShow(){
 /* ---------- অ্যাকাউন্ট ---------- */
 const sb=window.supabase?supabase.createClient(SB,KEY):null;
 let U=null,PR=null;
-const accLbl=()=>U?"👤 "+((PR?.name||"").split(" ")[0]||t("acc")):"👤 "+t("login");
+const accLbl=()=>U?((PR?.name||"").split(" ")[0]||t("acc")):t("login");
 async function loadProfile(){try{const{data}=await sb.from("profiles").select("*").eq("id",U.id).maybeSingle();PR=data||null}catch(e){}}
 async function initAuth(){
   if(!sb)return;
@@ -273,9 +277,9 @@ async function loadMyOrders(){
 }
 function accView(){
   const v=$("view");
-  if(!U){v.innerHTML=`<div class="card info trk"><h2>👤 ${t("acc")}</h2><p class="mu">${t("hint")}</p><button class="big" data-am="in" style="margin-top:12px">${t("login")}</button></div>`;return}
+  if(!U){v.innerHTML=`<div class="card info trk"><h2> ${t("acc")}</h2><p class="mu">${t("hint")}</p><button class="big" data-am="in" style="margin-top:12px">${t("login")}</button></div>`;return}
   const p=PR||{};
-  v.innerHTML=`<div class="card info trk"><h2>👤 ${t("acc")}</h2><div class="mu">${esc(U.email)}</div>
+  v.innerHTML=`<div class="card info trk"><h2> ${t("acc")}</h2><div class="mu">${esc(U.email)}</div>
   <div style="display:grid;gap:8px;margin-top:12px"><input id="p_name" class="fi" placeholder="${t("name")}" maxlength="100" value="${esc(p.name)}"><input id="p_phone" class="fi" placeholder="${t("phone")}" maxlength="20" inputmode="tel" value="${esc(p.phone)}"><textarea id="p_addr" class="fi" rows="2" placeholder="${t("addr")}" maxlength="300">${esc(p.address)}</textarea></div>
   <div class="row" style="margin-top:12px"><button class="add" id="saveP">${t("saveP")}</button><button class="pill" id="logout" style="background:var(--ln);color:var(--tx)">${t("logout")}</button></div><div class="mu" id="pmsg" style="margin-top:6px"></div></div>
   <h2 class="t" style="margin-top:18px">${t("myorders")}</h2><div id="mo">${S.MO?ordersHtml():"…"}</div>`;
