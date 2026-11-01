@@ -204,11 +204,11 @@ async function placeOrder(){
   if(!name||!addr||!/^(\+?88)?01\d{9}$/.test(phone.replace(/[\s-]/g,""))){e.textContent=t("bad");return}
   if(S.cartRest!==null&&sub()<minOrder()){e.textContent=t("minerr")+tk(minOrder());return}
   const b=$("place");b.disabled=true;b.textContent=t("placing");
-  const no="HG"+Date.now().toString(36).toUpperCase().slice(-6);
-  const body={order_no:no,name,phone,address:addr,memo:memo||null,items:Object.values(S.cart).map(i=>({name_bn:i.bn||i.name,name:i.name,price:i.price,qty:i.q})),subtotal:sub(),delivery:fee(),total:sub()+fee(),status:"new",restaurant_id:S.cartRest,rider_id:null};
+  let no;
+  const args={p_name:name,p_phone:phone,p_address:addr,p_memo:memo||null,p_restaurant_id:S.cartRest,p_items:Object.values(S.cart).map(i=>({key:i.key,qty:i.q}))};
   try{
-    if(sb){const{error}=await sb.from("orders").insert(body);if(error)throw 0}
-    else{const r=await fetch(SB+"/rest/v1/orders",{method:"POST",headers:{...H,Prefer:"return=minimal"},body:JSON.stringify(body)});if(!r.ok)throw 0}
+    if(sb){const{data,error}=await sb.rpc("place_order",args);if(error||!data)throw 0;no=data}
+    else{const r=await fetch(SB+"/rest/v1/rpc/place_order",{method:"POST",headers:H,body:JSON.stringify(args)});if(!r.ok)throw 0;no=await r.json();if(!no)throw 0}
     try{if(U&&sb&&($("f_save")?.checked||!PR?.address)){await sb.from("profiles").upsert({id:U.id,name,phone,address:addr});await loadProfile()}}catch(x){}
     S.MO=null;
     S.cart={};S.cartRest=null;save();S.tn=no;try{localStorage.setItem("lastOrder",no)}catch(x){}render();
