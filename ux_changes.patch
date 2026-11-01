@@ -1,0 +1,128 @@
+--- /tmp/index.before.html	2026-11-01 04:58:48.373187498 +0000
++++ index.html	2026-11-01 04:59:12.348743635 +0000
+@@ -4,6 +4,15 @@
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>হগলতান – খাবার ও মুদি ডেলিভারি</title>
++<meta name="description" content="রেস্তোরাঁর খাবার ও তাজা মুদি বাজার, ঘরে বসে অর্ডার করুন। ক্যাশ অন ডেলিভারি। Restaurant food and fresh groceries delivered to your door.">
++<meta name="theme-color" content="#d70f64">
++<meta property="og:type" content="website">
++<meta property="og:site_name" content="হগলতান">
++<meta property="og:locale" content="bn_BD">
++<meta property="og:title" content="হগলতান – খাবার ও মুদি ডেলিভারি">
++<meta property="og:description" content="রেস্তোরাঁর খাবার ও তাজা মুদি বাজার, ঘরে বসে অর্ডার করুন। ক্যাশ অন ডেলিভারি।">
++<meta name="twitter:card" content="summary">
++<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23d70f64'/%3E%3Ctext x='50' y='70' font-size='56' text-anchor='middle'%3E%F0%9F%9B%B5%3C/text%3E%3C/svg%3E">
+ <style>
+ :root{--p:#d70f64;--p2:#a80a4d;--bg:#f5f5f6;--cd:#fff;--tx:#222;--mu:#707078;--ln:#e8e8ec;--ok:#2e9d4f;--sh:0 2px 10px rgba(0,0,0,.07)}
+ @media(prefers-color-scheme:dark){:root{--bg:#121214;--cd:#1e1e22;--tx:#f2f2f2;--mu:#a2a2aa;--ln:#34343b;--sh:none}}
+@@ -83,6 +92,9 @@
+ .tag{background:#ffe3ef;color:var(--p);border-radius:10px;padding:2px 10px;font-size:12px;font-weight:700}
+ .lk{color:var(--p);font-weight:600;text-decoration:underline;font-size:14px}
+ footer{text-align:center;color:var(--mu);font-size:13px;padding:24px}
++.ct{position:fixed;right:12px;bottom:84px;z-index:20;display:flex;flex-direction:column;gap:10px}
++.ct a{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;text-decoration:none;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25)}
++.ct .wa{background:#25d366}.ct .tl{background:var(--p)}
+ </style>
+ </head>
+ <body>
+@@ -102,6 +114,7 @@
+   <div id="view"></div>
+ </main>
+ <button class="fab" id="fab"></button>
++<div class="ct" id="ct"></div>
+ <div class="dr" id="dr"><div class="pn" id="pn"></div></div>
+ <footer id="foot"></footer>
+ 
+@@ -109,9 +122,17 @@
+ <script>
+ const SB="https://zphbqwkvsacptggytbmr.supabase.co",KEY="sb_publishable_i6_Cye57ryc5jSzHdmem-A_7WDig9Zd";
+ const H={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
++function contactHtml(){
++  let d=String(CONTACT_PHONE||"").replace(/\D/g,"");
++  if(/^01\d{9}$/.test(d))d="88"+d;
++  if(!/^8801\d{9}$/.test(d))return"";
++  return`<a class="wa" href="https://wa.me/${d}" target="_blank" rel="noopener" aria-label="${t("waUs")}" title="${t("waUs")}">💬</a><a class="tl" href="tel:+${d}" aria-label="${t("callUs")}" title="${t("callUs")}">📞</a>`;
++}
+ const T={
+-bn:{login:"লগইন",signup:"অ্যাকাউন্ট খুলুন",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",have:"অ্যাকাউন্ট আছে? লগইন করুন",nohave:"নতুন? অ্যাকাউন্ট খুলুন",acc:"আমার অ্যাকাউন্ট",saveP:"সংরক্ষণ করুন",saved:"সংরক্ষিত হয়েছে",logout:"লগআউট",myorders:"আমার অর্ডার",noorders:"এখনো কোনো অর্ডার নেই",reorder:"আবার অর্ডার",trackb:"ট্র্যাক",miss:"কিছু আইটেম এখন পাওয়া যাচ্ছে না, বাদ দেওয়া হয়েছে",closedR:"রেস্তোরাঁটি এখন বন্ধ",saveaddr:"ঠিকানা ও তথ্য সংরক্ষণ করুন",hint:"লগইন করলে ঠিকানা সংরক্ষিত থাকবে, আগের অর্ডার দেখা ও আবার অর্ডার করা যাবে",shortPw:"সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন",bad2:"নাম ও সঠিক ফোন নম্বর দিন",confirmMail:"আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। লিংকে চাপুন, তারপর লগইন করুন।",wrongPw:"ইমেইল বা পাসওয়ার্ড ভুল",exists:"এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন",h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:" ক্যাশ অন ডেলিভারি",c2:" রেস্তোরাঁর খাবার",c3:" তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:" রেস্তোরাঁ",groc:" মুদি বাজার",trk:" অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
+-en:{login:"Log in",signup:"Create account",email:"Email",pw:"Password (min 6 characters)",have:"Have an account? Log in",nohave:"New here? Create account",acc:"My account",saveP:"Save",saved:"Saved",logout:"Log out",myorders:"My orders",noorders:"No orders yet",reorder:"Reorder",trackb:"Track",miss:"Some items are unavailable and were skipped",closedR:"This restaurant is closed now",saveaddr:"Save my address & details",hint:"Log in to save your address, see past orders and reorder",shortPw:"Enter a valid email and a password of 6+ characters",bad2:"Enter your name and a valid phone",confirmMail:"A confirmation link was sent to your email. Tap it, then log in.",wrongPw:"Wrong email or password",exists:"An account with this email exists, please log in",h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:" Cash on delivery",c2:" Restaurant food",c3:" Fresh grocery",ph:"Search restaurants, dishes or items…",rest:" Restaurants",groc:" Grocery",trk:" Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
++bn:{forgot:"পাসওয়ার্ড ভুলে গেছেন?",resetMail:"প্রথমে ওপরে আপনার ইমেইল লিখুন",resetSent:"পাসওয়ার্ড রিসেটের লিংক আপনার ইমেইলে পাঠানো হয়েছে। ইমেইল চেক করুন।",newPw:"নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",setPw:"পাসওয়ার্ড বদলান",pwDone:"পাসওয়ার্ড বদলানো হয়েছে",callUs:"ফোন করুন",waUs:"WhatsApp-এ মেসেজ করুন",login:"লগইন",signup:"অ্যাকাউন্ট খুলুন",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",have:"অ্যাকাউন্ট আছে? লগইন করুন",nohave:"নতুন? অ্যাকাউন্ট খুলুন",acc:"আমার অ্যাকাউন্ট",saveP:"সংরক্ষণ করুন",saved:"সংরক্ষিত হয়েছে",logout:"লগআউট",myorders:"আমার অর্ডার",noorders:"এখনো কোনো অর্ডার নেই",reorder:"আবার অর্ডার",trackb:"ট্র্যাক",miss:"কিছু আইটেম এখন পাওয়া যাচ্ছে না, বাদ দেওয়া হয়েছে",closedR:"রেস্তোরাঁটি এখন বন্ধ",saveaddr:"ঠিকানা ও তথ্য সংরক্ষণ করুন",hint:"লগইন করলে ঠিকানা সংরক্ষিত থাকবে, আগের অর্ডার দেখা ও আবার অর্ডার করা যাবে",shortPw:"সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন",bad2:"নাম ও সঠিক ফোন নম্বর দিন",confirmMail:"আপনার ইমেইলে একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। লিংকে চাপুন, তারপর লগইন করুন।",wrongPw:"ইমেইল বা পাসওয়ার্ড ভুল",exists:"এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন",h1:"ক্ষুধা লাগলে, হগলতান",sub:"রেস্তোরাঁর খাবার ও তাজা বাজার, দরজায় নগদ টাকায় নিন",c1:" ক্যাশ অন ডেলিভারি",c2:" রেস্তোরাঁর খাবার",c3:" তাজা মুদি",ph:"রেস্তোরাঁ, খাবার বা পণ্য খুঁজুন…",rest:" রেস্তোরাঁ",groc:" মুদি বাজার",trk:" অর্ডার ট্র্যাক",all:"সব",veg:"সবজি",fruit:"ফল",stap:"মুদি",dairy:"দুধ-ডিম",open:"খোলা",closed:"বন্ধ",min:"ন্যূনতম",fee:"ডেলিভারি",add:"যোগ করুন",cart:"কার্ট",back:"← ফিরে যান",empty:"কার্ট খালি",sub_t:"সাবটোটাল",del:"ডেলিভারি চার্জ",tot:"মোট",name:"আপনার নাম",phone:"ফোন (০১XXXXXXXXX)",addr:"পূর্ণ ঠিকানা",memo:"নোট (ঐচ্ছিক)",place:"অর্ডার করুন",placing:"পাঠানো হচ্ছে…",done:"অর্ডার পাঠানো হয়েছে!",ono:"অর্ডার নম্বর",cod:"রাইডারকে নগদ টাকা দিন।",bad:"নাম, সঠিক ফোন ও ঠিকানা দিন",minerr:"ন্যূনতম অর্ডার ",oneRest:"এক সময়ে এক রেস্তোরাঁ থেকে অর্ডার করা যায়। নতুন কার্ট শুরু করবেন?",fail:"অর্ডার পাঠানো যায়নি, আবার চেষ্টা করুন",none:"কিছু পাওয়া যায়নি",view:"কার্ট দেখুন",foot:"© হগলতান · তাজা বাজার ও খাবার, ঘরে বসে",mn:"মিনিট",pop:"মেনু",tno:"অর্ডার নম্বর লিখুন",tgo:"দেখুন",tnf:"এই নম্বরে কোনো অর্ডার পাওয়া যায়নি",track:"অর্ডার ট্র্যাক করুন",s:["নতুন","কনফার্মড","তৈরি হচ্ছে","পথে","পৌঁছেছে"],cancelled:"অর্ডারটি বাতিল হয়েছে"},
++en:{forgot:"Forgot password?",resetMail:"Enter your email above first",resetSent:"A password reset link was sent to your email. Please check your inbox.",newPw:"New password (min 6 characters)",setPw:"Change password",pwDone:"Password changed",callUs:"Call us",waUs:"Message us on WhatsApp",login:"Log in",signup:"Create account",email:"Email",pw:"Password (min 6 characters)",have:"Have an account? Log in",nohave:"New here? Create account",acc:"My account",saveP:"Save",saved:"Saved",logout:"Log out",myorders:"My orders",noorders:"No orders yet",reorder:"Reorder",trackb:"Track",miss:"Some items are unavailable and were skipped",closedR:"This restaurant is closed now",saveaddr:"Save my address & details",hint:"Log in to save your address, see past orders and reorder",shortPw:"Enter a valid email and a password of 6+ characters",bad2:"Enter your name and a valid phone",confirmMail:"A confirmation link was sent to your email. Tap it, then log in.",wrongPw:"Wrong email or password",exists:"An account with this email exists, please log in",h1:"Hungry? Hogoltan.",sub:"Restaurant food and fresh groceries, pay cash at your door",c1:" Cash on delivery",c2:" Restaurant food",c3:" Fresh grocery",ph:"Search restaurants, dishes or items…",rest:" Restaurants",groc:" Grocery",trk:" Track order",all:"All",veg:"Veg",fruit:"Fruit",stap:"Staples",dairy:"Dairy & eggs",open:"Open",closed:"Closed",min:"Min",fee:"Delivery",add:"Add",cart:"Cart",back:"← Back",empty:"Your cart is empty",sub_t:"Subtotal",del:"Delivery fee",tot:"Total",name:"Your name",phone:"Phone (01XXXXXXXXX)",addr:"Full address",memo:"Note (optional)",place:"Place order",placing:"Sending…",done:"Order placed!",ono:"Order no.",cod:"Pay cash to the rider.",bad:"Enter name, a valid phone and address",minerr:"Minimum order ",oneRest:"You can order from one restaurant at a time. Start a new cart?",fail:"Could not place order, try again",none:"Nothing found",view:"View cart",foot:"© Hogoltan · fresh groceries & food, at home",mn:"min",pop:"Menu",tno:"Enter order number",tgo:"Track",tnf:"No order found with this number",track:"Track your order",s:["New","Confirmed","Preparing","On the way","Delivered"],cancelled:"This order was cancelled"}};
++// যোগাযোগের নম্বর বসান (যেমন "01712345678"); খালি থাকলে ফোন/WhatsApp বাটন দেখানো হবে না
++const CONTACT_PHONE="";
+ const GROC_FEE=40,SEQ=["new","confirmed","preparing","on_the_way","delivered"];
+ let L=localStorage.getItem("lang")||"bn",t=k=>T[L][k];
+ let S={tab:"rest",cat:"all",rid:null,q:"",R:[],P:[],cart:{},cartRest:null,loading:true,tn:""};
+@@ -143,7 +164,7 @@
+ function render(){
+   document.documentElement.lang=L;
+   $("lang").textContent=L==="bn"?"English":"বাংলা";$("acc").textContent=accLbl();
+-  $("h1").textContent=t("h1");$("sub").textContent=t("sub");$("q").placeholder=t("ph");$("foot").textContent=t("foot");
++  $("h1").textContent=t("h1");$("sub").textContent=t("sub");$("q").placeholder=t("ph");$("foot").textContent=t("foot");$("ct").innerHTML=contactHtml();
+   $("chips").innerHTML=["c1","c2","c3"].map(k=>`<span>${t(k)}</span>`).join("");
+   $("tabs").innerHTML=["rest","groc","trk"].map(k=>`<button class="tab ${S.tab===k&&!S.rid?"on":""}" data-t="${k}">${t(k)}</button>`).join("");
+   const cnt=Object.values(S.cart).reduce((a,b)=>a+b.q,0);
+@@ -231,24 +252,50 @@
+ 
+ 
+ /* ---------- অ্যাকাউন্ট ---------- */
++const RECOVERY=/type=recovery/.test(location.hash);
+ const sb=window.supabase?supabase.createClient(SB,KEY):null;
+ let U=null,PR=null;
+ const accLbl=()=>U?((PR?.name||"").split(" ")[0]||t("acc")):t("login");
+ async function loadProfile(){try{const{data}=await sb.from("profiles").select("*").eq("id",U.id).maybeSingle();PR=data||null}catch(e){}}
+ async function initAuth(){
+   if(!sb)return;
+-  const{data}=await sb.auth.getSession();U=data.session?.user||null;if(U)await loadProfile();render();
+-  sb.auth.onAuthStateChange((_e,s)=>{U=s?.user||null;S.MO=null;if(!U)PR=null;setTimeout(async()=>{if(U)await loadProfile();render()},0)});
++  const{data}=await sb.auth.getSession();U=data.session?.user||null;if(U)await loadProfile();render();if(RECOVERY&&U)openNewPw();
++  sb.auth.onAuthStateChange((_e,s)=>{U=s?.user||null;S.MO=null;if(!U)PR=null;setTimeout(async()=>{if(U)await loadProfile();render();if(_e==="PASSWORD_RECOVERY")openNewPw()},0)});
+ }
+ function openAuth(mode="in"){
+   const su=mode==="up";
+   $("pn").innerHTML=`<div class="row"><h2>${su?t("signup"):t("login")}</h2><button data-close class="pill" style="background:var(--ln);color:var(--tx)">✕</button></div>
+   ${su?`<input id="a_name" placeholder="${t("name")}" maxlength="100"><input id="a_phone" placeholder="${t("phone")}" maxlength="20" inputmode="tel">`:""}
+   <input id="a_mail" type="email" placeholder="${t("email")}"><input id="a_pw" type="password" placeholder="${t("pw")}">
+-  <div class="err" id="aerr"></div><button class="big" id="a_go" data-mode="${mode}">${su?t("signup"):t("login")}</button>
++  <div class="err" id="aerr"></div>${su?"":`<button class="lk" id="a_forgot" style="align-self:flex-start">${t("forgot")}</button>`}<button class="big" id="a_go" data-mode="${mode}">${su?t("signup"):t("login")}</button>
+   <button class="lk" data-am="${su?"in":"up"}">${su?t("have"):t("nohave")}</button>`;
+   $("dr").classList.add("on");
+ }
++async function doForgot(){
++  const e=$("a_mail").value.trim(),box=$("aerr");box.style.color="";
++  if(!/^\S+@\S+\.\S+$/.test(e)){box.textContent=t("resetMail");return}
++  try{
++    const{error}=await sb.auth.resetPasswordForEmail(e,{redirectTo:location.origin+location.pathname});
++    if(error)throw error;
++    box.style.color="var(--ok)";box.textContent=t("resetSent");
++  }catch(x){box.textContent=x.message||t("fail")}
++}
++function openNewPw(){
++  $("pn").innerHTML=`<div class="row"><h2>${t("setPw")}</h2><button data-close class="pill" style="background:var(--ln);color:var(--tx)">✕</button></div>
++  <input id="n_pw" type="password" placeholder="${t("newPw")}" autocomplete="new-password">
++  <div class="err" id="nerr"></div><button class="big" id="n_go">${t("setPw")}</button>`;
++  $("dr").classList.add("on");
++}
++async function doNewPw(){
++  const pw=$("n_pw").value,box=$("nerr"),b=$("n_go");box.style.color="";
++  if(pw.length<6){box.textContent=t("newPw");return}
++  b.disabled=true;
++  const{error}=await sb.auth.updateUser({password:pw});
++  if(error){box.textContent=error.message;b.disabled=false;return}
++  try{history.replaceState(null,"",location.pathname+location.search)}catch(x){}
++  box.style.color="var(--ok)";box.textContent=t("pwDone");
++  setTimeout(()=>$("dr").classList.remove("on"),1200);
++}
+ async function doAuth(mode){
+   const e=$("a_mail").value.trim(),pw=$("a_pw").value,box=$("aerr"),b=$("a_go");
+   if(!/^\S+@\S+\.\S+$/.test(e)||pw.length<6){box.textContent=t("shortPw");return}
+@@ -317,6 +364,8 @@
+   else if(g("#tgo")){S.tn=$("tn").value.trim().toUpperCase();trackShow()}
+   else if(el=g("[data-am]")){openAuth(el.dataset.am)}
+   else if(el=g("#a_go")){doAuth(el.dataset.mode)}
++  else if(g("#a_forgot")){doForgot()}
++  else if(g("#n_go")){doNewPw()}
+   else if(g("#acc")){if(U){S.tab="acc";S.rid=null;render()}else openAuth("in")}
+   else if(el=g("[data-ro]")){const o=(S.MO||[]).find(x=>String(x.id)===el.dataset.ro);if(o)reorder(o)}
+   else if(el=g("[data-tr]")){S.tn=el.dataset.tr;S.tab="trk";S.rid=null;render()}
